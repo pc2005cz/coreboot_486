@@ -93,29 +93,52 @@ int cbmem_initialize_id_size(u32 id, u64 size)
 {
 	const int recovery = 1;
 
+// printk(BIOS_DEBUG, "CC1\n");
+
 	cbmem_top_init_once();
+
+// printk(BIOS_DEBUG, "CC2\n");
 
 	imd_handle_init(&imd, cbmem_top());
 
+// printk(BIOS_DEBUG, "CC3\n");
+
 	if (imd_recover(&imd))
 		return 1;
+
+// printk(BIOS_DEBUG, "CC4\n");
 
 	/*
 	 * Lock the imd in romstage on a recovery. The assumption is that
 	 * if the imd area was recovered in romstage then S3 resume path
 	 * is being taken.
 	 */
-	if (ENV_CREATES_CBMEM)
+	if (ENV_CREATES_CBMEM) {
 		imd_lockdown(&imd);
+		// int ret= imd_lockdown(&imd);
+// printk(BIOS_DEBUG, "CC4b ret=%i\n", ret);
+
+	}
+
+// printk(BIOS_DEBUG, "CC5\n");
 
 	/* Add the specified range first */
-	if (size)
+	if (size) {
 		cbmem_add(id, size);
+		// void * tmp = cbmem_add(id, size);
+// printk(BIOS_DEBUG, "CC5b %p\n", tmp);
+	}
+
+// printk(BIOS_DEBUG, "CC6\n");
 
 	/* Complete migration to CBMEM. */
 	cbmem_run_init_hooks(recovery);
 
+// printk(BIOS_DEBUG, "CC7\n");
+
 	cbmem_initialized = 1;
+
+// printk(BIOS_DEBUG, "CC8\n");
 
 	/* Recovery successful. */
 	return 0;

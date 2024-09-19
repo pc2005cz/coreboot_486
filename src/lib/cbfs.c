@@ -38,15 +38,42 @@ CBMEM_CREATION_HOOK(switch_to_postram_cache);
 enum cb_err _cbfs_boot_lookup(const char *name, bool force_ro,
 			      union cbfs_mdata *mdata, struct region_device *rdev)
 {
+	// printk(BIOS_DEBUG, "D1 boot lookup\n");
+
+	#if 0
+	printk(BIOS_DEBUG, "D1 boot lookup 0x500 table:\n");
+	for (unsigned idx=0;idx<40;idx++) {
+		u8 * dptr = (u8 *)0x500;
+		printk(BIOS_DEBUG, "%02x ", dptr[idx]);
+	}
+	printk(BIOS_DEBUG, "\n");
+	#endif
+
 	const struct cbfs_boot_device *cbd = cbfs_get_boot_device(force_ro);
-	if (!cbd)
+	if (!cbd) {
+	// printk(BIOS_DEBUG, "D1 cb error\n");
 		return CB_ERR;
+	}
+
+	// printk(BIOS_DEBUG, "D2\n");
+
+	#if 0
+	printk(BIOS_DEBUG, "0x500 table: ");
+	for (unsigned idx=0;idx<40;idx++) {
+		u8 * dptr = (u8 *)0x500;
+		printk(BIOS_DEBUG, "%02x ", dptr[idx]);
+	}
+	printk(BIOS_DEBUG, "\n");
+	#endif
 
 	size_t data_offset;
 	enum cb_err err = CB_CBFS_CACHE_FULL;
 	if (!CONFIG(NO_CBFS_MCACHE) && !ENV_SMM && cbd->mcache_size)
 		err = cbfs_mcache_lookup(cbd->mcache, cbd->mcache_size,
 					 name, mdata, &data_offset);
+
+// printk(BIOS_DEBUG, "D3\n");
+
 	if (err == CB_CBFS_CACHE_FULL) {
 		struct vb2_hash *metadata_hash = NULL;
 		if (CONFIG(TOCTOU_SAFETY)) {
@@ -66,11 +93,19 @@ enum cb_err _cbfs_boot_lookup(const char *name, bool force_ro,
 		err = cbfs_lookup(&cbd->rdev, name, mdata, &data_offset, metadata_hash);
 	}
 
+	// printk(BIOS_DEBUG, "D4\n");
+
 	if (CONFIG(VBOOT_ENABLE_CBFS_FALLBACK) && !force_ro && err == CB_CBFS_NOT_FOUND) {
 		printk(BIOS_INFO, "CBFS: Fall back to RO region for %s\n", name);
 		return _cbfs_boot_lookup(name, true, mdata, rdev);
 	}
+
+	// printk(BIOS_DEBUG, "D5\n");
+
 	if (err) {
+
+		//printk(BIOS_DEBUG, "D6\n");
+
 		if (err == CB_CBFS_NOT_FOUND)
 			printk(BIOS_WARNING, "CBFS: '%s' not found.\n", name);
 		else if (err == CB_CBFS_HASH_MISMATCH)
@@ -81,8 +116,34 @@ enum cb_err _cbfs_boot_lookup(const char *name, bool force_ro,
 		return err;
 	}
 
+	// printk(BIOS_DEBUG, "D7\n");
+
+	#if ENV_RAMSTAGE
+	#if 0	//pc2005
+	printk(BIOS_DEBUG, "0x500 table: ");
+	for (unsigned idx=0;idx<40;idx++) {
+		u8 * dptr = (u8 *)0x500;
+		printk(BIOS_DEBUG, "%02x ", dptr[idx]);
+	}
+	printk(BIOS_DEBUG, "\n");
+	#endif
+	#endif
+
 	if (rdev_chain(rdev, &cbd->rdev, data_offset, be32toh(mdata->h.len)))
 		return CB_ERR;
+
+	//printk(BIOS_DEBUG, "D8\n");
+
+	#if ENV_RAMSTAGE
+	#if 0	//pc2005
+	printk(BIOS_DEBUG, "0x500 table: ");
+	for (unsigned idx=0;idx<40;idx++) {
+		u8 * dptr = (u8 *)0x500;
+		printk(BIOS_DEBUG, "%02x ", dptr[idx]);
+	}
+	printk(BIOS_DEBUG, "\n");
+	#endif
+	#endif
 
 	return CB_SUCCESS;
 }
@@ -432,6 +493,7 @@ static void *do_alloc(union cbfs_mdata *mdata, struct region_device *rdev,
 	/* allocator == NULL means do a cbfs_map() */
 	if (allocator) {
 		loc = allocator(arg, size, mdata);
+// DEBUG("XXXX allocator %p\n", loc);
 	} else if (compression == CBFS_COMPRESS_NONE) {
 		void *mapping = rdev_mmap_full(rdev);
 		if (!mapping)
@@ -448,7 +510,16 @@ static void *do_alloc(union cbfs_mdata *mdata, struct region_device *rdev,
 		ERROR("Cannot map compressed file %s without cbfs_cache\n", mdata->h.filename);
 		return NULL;
 	} else {
+DEBUG("WWWW mpa PRE al:%u mpsz:%u mpfof:%u sz:%u\n",
+      cbfs_cache.alignment,
+      cbfs_cache.size,
+      cbfs_cache.free_offset,
+      size
+
+);
 		loc = mem_pool_alloc(&cbfs_cache, size);
+
+DEBUG("XXXX mem_pool_alloc %p\n", loc);
 	}
 
 	if (!loc) {
@@ -543,19 +614,32 @@ enum cb_err cbfs_prog_stage_load(struct prog *pstage)
 	struct region_device rdev;
 	enum cb_err err;
 
+	// printk(BIOS_NOTICE, "C1\n");
+
 	prog_locate_hook(pstage);
 
-	if ((err = _cbfs_boot_lookup(prog_name(pstage), false, &mdata, &rdev)))
+	// printk(BIOS_NOTICE, "C2\n");
+
+	if ((err = _cbfs_boot_lookup(prog_name(pstage), false, &mdata, &rdev))) {
+		//printk(BIOS_NOTICE, "C3\n");
+
 		return err;
+	}
+
+	// printk(BIOS_NOTICE, "C4\n");
 
 	assert(be32toh(mdata.h.type) == CBFS_TYPE_STAGE);
 	pstage->cbfs_type = CBFS_TYPE_STAGE;
+
+	// printk(BIOS_NOTICE, "C5\n");
 
 	enum cbfs_compression compression = CBFS_COMPRESS_NONE;
 	const struct cbfs_file_attr_compression *cattr = cbfs_find_attr(&mdata,
 				CBFS_FILE_ATTR_TAG_COMPRESSION, sizeof(*cattr));
 	if (cattr)
 		compression = be32toh(cattr->compression);
+
+	// printk(BIOS_NOTICE, "C6\n");
 
 	const struct cbfs_file_attr_stageheader *sattr = cbfs_find_attr(&mdata,
 				CBFS_FILE_ATTR_TAG_STAGEHEADER, sizeof(*sattr));
@@ -566,10 +650,15 @@ enum cb_err cbfs_prog_stage_load(struct prog *pstage)
 	prog_set_entry(pstage, prog_start(pstage) +
 			       be32toh(sattr->entry_offset), NULL);
 
+	//printk(BIOS_NOTICE, "C7\n");
+
 	/* Hacky way to not load programs over read only media. The stages
 	 * that would hit this path initialize themselves. */
 	if ((ENV_BOOTBLOCK || ENV_SEPARATE_VERSTAGE) &&
 	    !CONFIG(NO_XIP_EARLY_STAGES) && CONFIG(BOOT_DEVICE_MEMORY_MAPPED)) {
+
+		//printk(BIOS_NOTICE, "C8\n");
+
 		void *mapping = rdev_mmap_full(&rdev);
 		rdev_munmap(&rdev, mapping);
 		if (cbfs_file_hash_mismatch(mapping, region_device_sz(&rdev), &mdata, false))
@@ -577,6 +666,8 @@ enum cb_err cbfs_prog_stage_load(struct prog *pstage)
 		if (mapping == prog_start(pstage))
 			return CB_SUCCESS;
 	}
+
+	//printk(BIOS_NOTICE, "C9\n");
 
 	/* LZ4 stages can be decompressed in-place to save mapping scratch space. Load the
 	   compressed data to the end of the buffer and point &rdev to that memory location. */
@@ -588,24 +679,36 @@ enum cb_err cbfs_prog_stage_load(struct prog *pstage)
 		rdev_chain_mem(&rdev, compr_start, in_size);
 	}
 
+	//printk(BIOS_NOTICE, "C10\n");
+
 	size_t fsize = cbfs_load_and_decompress(&rdev, prog_start(pstage), prog_size(pstage),
 						compression, &mdata, false);
 	if (!fsize)
 		return CB_ERR;
 
+	//printk(BIOS_NOTICE, "C11\n");
+
 	/* Clear area not covered by file. */
 	memset(prog_start(pstage) + fsize, 0, prog_size(pstage) - fsize);
 
+	// printk(BIOS_NOTICE, "C12\n");
+
 	prog_segment_loaded((uintptr_t)prog_start(pstage), prog_size(pstage),
 			    SEG_FINAL);
+
+	// printk(BIOS_NOTICE, "C13\n");
+
 
 	return CB_SUCCESS;
 }
 
 void cbfs_boot_device_find_mcache(struct cbfs_boot_device *cbd, uint32_t id)
 {
-	if (CONFIG(NO_CBFS_MCACHE) || ENV_SMM)
+	if (CONFIG(NO_CBFS_MCACHE) || ENV_SMM) {
+		// printk(BIOS_DEBUG, "Lx\n");
+
 		return;
+	}
 
 	if (cbd->mcache_size)
 		return;
@@ -648,21 +751,32 @@ enum cb_err cbfs_init_boot_device(const struct cbfs_boot_device *cbd,
 	return err;
 }
 
+
 const struct cbfs_boot_device *cbfs_get_boot_device(bool force_ro)
 {
+	// printk(BIOS_DEBUG, "get boot device\n");
+
 	static struct cbfs_boot_device ro;
+
+	// printk(BIOS_DEBUG, "L0 %u\n", region_device_sz(&ro.rdev));
 
 	/* Ensure we always init RO mcache, even if the first file is from the RW CBFS.
 	   Otherwise it may not be available when needed in later stages. */
-	if (ENV_INITIAL_STAGE && !force_ro && !region_device_sz(&ro.rdev))
+	if (ENV_INITIAL_STAGE && !force_ro && !region_device_sz(&ro.rdev)) {
+		// printk(BIOS_DEBUG, "bootblock force RO\n");
+
 		cbfs_get_boot_device(true);
+	}
 
 	if (!force_ro) {
 		const struct cbfs_boot_device *rw = vboot_get_cbfs_boot_device();
 		/* This will return NULL if vboot isn't enabled, didn't run yet or decided to
 		   boot into recovery mode. */
-		if (rw)
+		if (rw) {
+			// printk(BIOS_DEBUG, "L1 RW\n");
+
 			return rw;
+		}
 	}
 
 	/* In rare cases post-RAM stages may run this before cbmem_initialize(), so we can't
@@ -694,6 +808,8 @@ const struct cbfs_boot_device *cbfs_get_boot_device(bool force_ro)
 		else if (err && err != CB_CBFS_CACHE_FULL)
 			die("RO CBFS initialization error: %d", err);
 	}
+
+	// printk(BIOS_DEBUG, "L3 RO\n");
 
 	return &ro;
 }

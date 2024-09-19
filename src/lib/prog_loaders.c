@@ -38,6 +38,8 @@ void run_romstage(void)
 	prog_run(&romstage);
 
 fail:
+	//printk(BIOS_NOTICE, "B10 fail\n");
+
 	if (CONFIG(BOOTBLOCK_CONSOLE))
 		die_with_post_code(POST_INVALID_ROM,
 				   "Couldn't load romstage.\n");
@@ -181,8 +183,26 @@ void payload_run(void)
 {
 	struct prog *payload = &global_payload;
 
+	#if 0	//pc2005
+	printk(BIOS_DEBUG, "0x500 table: ");
+	for (unsigned idx=0;idx<40;idx++) {
+		u8 * dptr = (u8 *)0x500;
+		printk(BIOS_DEBUG, "%02x ", dptr[idx]);
+	}
+	printk(BIOS_DEBUG, "\n");
+	#endif
+
 	/* Reset to booting from this image as late as possible */
 	boot_successful();
+
+	#if 0	//pc2005
+	printk(BIOS_DEBUG, "0x500 table: ");
+	for (unsigned idx=0;idx<40;idx++) {
+		u8 * dptr = (u8 *)0x500;
+		printk(BIOS_DEBUG, "%02x ", dptr[idx]);
+	}
+	printk(BIOS_DEBUG, "\n");
+	#endif
 
 	printk(BIOS_DEBUG, "Jumping to boot code at %p(%p)\n",
 		prog_entry(payload), prog_entry_arg(payload));
@@ -195,6 +215,37 @@ void payload_run(void)
 	 * we stayed within our bounds.
 	 */
 	checkstack(_estack, 0);
+
+	#if 0
+	printk(BIOS_DEBUG, "0x500 table: ");
+	for (unsigned idx=0;idx<40;idx++) {
+		u8 * dptr = (u8 *)0x500;
+		printk(BIOS_DEBUG, "%02x ", dptr[idx]);
+	}
+	printk(BIOS_DEBUG, "\n");
+	#endif
+
+	#if 0
+
+	void* current_address;
+
+	// asm volatile("rdtsc" :::);
+	// asm volatile("rdtsc" :::);
+	// asm volatile("rdtsc" :::);
+	// asm volatile("rdtsc" :::);
+	// asm volatile("rdtsc" :::);
+	asm volatile(
+
+		"call get_eip\n\t"
+		"get_eip:\n\t"
+		"pop %%eax\n\t"
+		"movl %%eax, %0\n\t"
+		: "=r" (current_address)::"%eax"
+	);
+	printk(BIOS_INFO, "**333 current address: %p\n", current_address);
+	#endif
+
+
 
 	prog_run(payload);
 }

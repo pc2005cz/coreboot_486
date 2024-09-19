@@ -10,6 +10,9 @@
 #include <string.h>
 #include <types.h>
 
+#include <console/streams.h>	//temp
+
+
 #define call_tx(x) tx_byte(x, data)
 
 #define ZEROPAD	1		/* pad with zero */
@@ -30,6 +33,8 @@ static int number(void (*tx_byte)(unsigned char byte, void *data), unsigned long
 	unsigned long long num = inum;
 	long long snum = num;
 
+	// console_tx_byte('<');
+
 	if (type & LARGE)
 		digits = "0123456789ABCDEF";
 	if (type & LEFT)
@@ -49,6 +54,7 @@ static int number(void (*tx_byte)(unsigned char byte, void *data), unsigned long
 			size--;
 		}
 	}
+
 	if (type & SPECIAL) {
 		if (base == 16)
 			size -= 2;
@@ -56,14 +62,48 @@ static int number(void (*tx_byte)(unsigned char byte, void *data), unsigned long
 			size--;
 	}
 	i = 0;
+
+	// console_tx_byte('!');
+
 	if (num == 0) {
+// console_tx_byte('a');
 		tmp[i++] = '0';
 	} else {
+// console_tx_byte('A');
 		while (num != 0) {
+
+//NOTICE chcipa to zde maximalne, original je univerzalni base, ale chcipa taky
+//moderni GCC pro div emituje predgenerovanej kod kde je endbr32 instrukce
+#if 0
+			switch(base) {
+				case 8:
+					tmp[i++] = digits[num % 8];
+					num /= 8;
+					break;
+				case 10:
+					tmp[i++] = digits[num % 10];
+					num /= 10;
+					break;
+				case 16:
+					tmp[i++] = digits[num % 16];
+					num /= 16;
+					break;
+				default:
+					break;
+
+			}
+#else
+
 			tmp[i++] = digits[num % base];
+
 			num /= base;
+
+#endif
 		}
 	}
+
+	// console_tx_byte('&');
+
 	if (i > precision) {
 		precision = i;
 	}
@@ -96,6 +136,7 @@ static int number(void (*tx_byte)(unsigned char byte, void *data), unsigned long
 		call_tx(tmp[i]), count++;
 	while (size-- > 0)
 		call_tx(' '), count++;
+
 	return count;
 }
 

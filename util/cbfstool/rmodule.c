@@ -553,10 +553,16 @@ write_elf(const struct rmod_context *ctx, const struct buffer *in,
 		loc += ctx->nrelocs * sizeof(Elf32_Addr);
 	ctx->xdr->put32(&rmod_header, loc);
 	/* module_link_start_address */
+
+	printf("++++++++++A 0x%08lx\n", ctx->phdr->p_vaddr);
+
 	ctx->xdr->put32(&rmod_header, ctx->phdr->p_vaddr);
 	/* module_program_size */
 	ctx->xdr->put32(&rmod_header, ctx->phdr->p_memsz);
 	/* module_entry_point */
+
+	printf("++++++++++B 0x%08lx\n", ctx->pelf.ehdr.e_entry);
+
 	ctx->xdr->put32(&rmod_header, ctx->pelf.ehdr.e_entry);
 	/* parameters_begin */
 	ctx->xdr->put32(&rmod_header, ctx->parameters_begin);

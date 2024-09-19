@@ -24,7 +24,7 @@ static bool dev_has_children(const struct device *dev)
 	return bus && bus->children;
 }
 
-#define res_printk(depth, str, ...)	printk(BIOS_DEBUG, "%*c"str, depth, ' ', __VA_ARGS__)
+#define res_printk(depth, str, ...)	printk(BIOS_INFO, "%*c"str, depth, ' ', __VA_ARGS__)
 
 /*
  * During pass 1, once all the requirements for downstream devices of a
@@ -388,7 +388,7 @@ static void allocate_child_resources(struct bus *bus, struct memranges *ranges,
 		if (memranges_steal(ranges, resource->limit, resource->size, resource->align,
 				    type_match, &resource->base, allocate_top_down) == false) {
 			printk(BIOS_ERR, "  ERROR: Resource didn't fit!!! ");
-			printk(BIOS_DEBUG, "  %s %02lx *  size: 0x%llx limit: %llx %s\n",
+			printk(BIOS_INFO, "  %s %02lx *  size: 0x%llx limit: %llx %s\n",
 			       dev_path(dev), resource->index,
 			       resource->size, resource->limit, resource2str(resource));
 			continue;
@@ -397,7 +397,7 @@ static void allocate_child_resources(struct bus *bus, struct memranges *ranges,
 		resource->limit = resource->base + resource->size - 1;
 		resource->flags |= IORESOURCE_ASSIGNED;
 
-		printk(BIOS_DEBUG, "  %s %02lx *  [0x%llx - 0x%llx] limit: %llx %s\n",
+		printk(BIOS_INFO, "  %s %02lx *  [0x%llx - 0x%llx] limit: %llx %s\n",
 		       dev_path(dev), resource->index, resource->base,
 		       resource->size ? resource->base + resource->size - 1 :
 		       resource->base, resource->limit, resource2str(resource));
@@ -410,7 +410,7 @@ static void update_constraints(struct memranges *ranges, const struct device *de
 	if (!res->size)
 		return;
 
-	printk(BIOS_DEBUG, " %s: %s %02lx base %08llx limit %08llx %s (fixed)\n",
+	printk(BIOS_INFO, " %s: %s %02lx base %08llx limit %08llx %s (fixed)\n",
 	       __func__, dev_path(dev), res->index, res->base,
 	       res->base + res->size - 1, resource2str(res));
 
@@ -488,7 +488,7 @@ static void constrain_domain_resources(const struct device *domain, struct memra
 static void setup_resource_ranges(const struct device *dev, const struct resource *res,
 				  unsigned long type, struct memranges *ranges)
 {
-	printk(BIOS_DEBUG, "%s %s: base: %llx size: %llx align: %d gran: %d limit: %llx\n",
+	printk(BIOS_INFO, "%s %s: base: %llx size: %llx align: %d gran: %d limit: %llx\n",
 	       dev_path(dev), resource2str(res), res->base, res->size, res->align,
 	       res->gran, res->limit);
 
@@ -506,7 +506,7 @@ static void cleanup_resource_ranges(const struct device *dev, struct memranges *
 				    const struct resource *res)
 {
 	memranges_teardown(ranges);
-	printk(BIOS_DEBUG, "%s %s: base: %llx size: %llx align: %d gran: %d limit: %llx done\n",
+	printk(BIOS_INFO, "%s %s: base: %llx size: %llx align: %d gran: %d limit: %llx done\n",
 	       dev_path(dev), resource2str(res), res->base, res->size, res->align,
 	       res->gran, res->limit);
 }

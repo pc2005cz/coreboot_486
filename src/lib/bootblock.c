@@ -13,6 +13,7 @@
 #include <symbols.h>
 #include <timestamp.h>
 
+
 __weak void bootblock_mainboard_early_init(void) { /* no-op */ }
 __weak void bootblock_soc_early_init(void) { /* do nothing */ }
 __weak void bootblock_soc_init(void) { /* do nothing */ }
@@ -41,8 +42,20 @@ void bootblock_main_with_timestamp(uint64_t base_timestamp,
 
 	timestamp_add_now(TS_BOOTBLOCK_START);
 
+	// post_code('b');
+
+	// asm volatile("rdtsc" :::);
 	bootblock_soc_early_init();
+
+	// printk(BIOS_DEBUG, "E1\n");
+
+// post_code('m');
+
+	// asm volatile("rdtsc" :::);
 	bootblock_mainboard_early_init();
+	// asm volatile("rdtsc" :::);
+
+	// printk(BIOS_DEBUG, "E2\n");
 
 	if (CONFIG(USE_OPTION_TABLE))
 		sanitize_cmos();
@@ -50,20 +63,107 @@ void bootblock_main_with_timestamp(uint64_t base_timestamp,
 	if (CONFIG(CMOS_POST))
 		cmos_post_init();
 
+// post_code('c');
+
+
 	if (CONFIG(BOOTBLOCK_CONSOLE)) {
 		console_init();
+
+		// printk(BIOS_NOTICE, "A1\n");
+
 		exception_init();
 	}
 
+	// printk(BIOS_NOTICE, "A2\n");
+
 	bootblock_soc_init();
+	// printk(BIOS_NOTICE, "A3\n");
 	bootblock_mainboard_init();
+	// printk(BIOS_NOTICE, "A4\n");
 
 	if (CONFIG(TPM_MEASURED_BOOT_INIT_BOOTBLOCK)) {
 		int s3resume = acpi_is_wakeup_s3();
 		tpm_setup(s3resume);
 	}
 
+	// printk(BIOS_NOTICE, "A5\n");
+
 	timestamp_add_now(TS_BOOTBLOCK_END);
+
+	// printk(BIOS_NOTICE, "A6\n");
+
+/*
+	printk(BIOS_NOTICE, "%p\n", &deleteme);
+	deleteme = 0x42236933;
+	printk(BIOS_NOTICE, "%p\n", &deleteme);
+
+uint8_t *const mem1 = (uint8_t *)0x01001f00;
+printk(BIOS_DEBUG, "\n%p:\n", mem1);
+for (unsigned idx=0;idx<0x100;idx++) {
+	if ((idx % 16) == 0) {
+		printk(BIOS_DEBUG, "%p: ", &mem1[idx]);
+	}
+	printk(BIOS_DEBUG, "%02hhx ", mem1[idx]);
+	if ((idx % 16) == 15) {
+		printk(BIOS_DEBUG, "\n");
+	}
+}*/
+
+
+	// post_code('x');
+
+#if 0
+	asm volatile(
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"rdtsc\n\t"
+		:::
+	);
+#endif
+
+	// volatile int xxx = deleteme;
+
+#if 0
+	asm volatile(
+		"nop\n\t"
+		"nop\n\t"
+		"nop\n\t"
+		"rdtsc\n\t"
+		:::
+	);
+#endif
+
+
+
+#if 0
+uint8_t *const mem1 = (uint8_t *)0xfffe0000;
+printk(BIOS_DEBUG, "\n%p:\n", mem1);
+for (unsigned idx=0;idx<0x100;idx++) {
+	printk(BIOS_DEBUG, "%02x ", mem1[idx]);
+}
+
+uint8_t *const mem2 = (uint8_t *)0xffff0000;
+printk(BIOS_DEBUG, "\n%p:\n", mem2);
+for (unsigned idx=0;idx<0x100;idx++) {
+	printk(BIOS_DEBUG, "%02x ", mem2[idx]);
+}
+
+uint8_t *const mem3 = (uint8_t *)0xe0000;
+printk(BIOS_DEBUG, "\n%p:\n", mem3);
+for (unsigned idx=0;idx<0x100;idx++) {
+	printk(BIOS_DEBUG, "%02x ", mem3[idx]);
+}
+
+uint8_t *const mem4 = (uint8_t *)0xf0000;
+printk(BIOS_DEBUG, "\n%p:\n", mem4);
+for (unsigned idx=0;idx<0x100;idx++) {
+	printk(BIOS_DEBUG, "%02x ", mem4[idx]);
+}
+#endif
+
+
+	printk(BIOS_NOTICE, "before ROM STAGE\n");
 
 	run_romstage();
 }
@@ -77,10 +177,16 @@ void main(void)
 {
 	uint64_t base_timestamp = 0;
 
+	post_code('D');
+
 	init_timer();
+
+	// post_code('E');
 
 	if (CONFIG(COLLECT_TIMESTAMPS))
 		base_timestamp = timestamp_get();
+
+	// post_code('F');
 
 	bootblock_main_with_timestamp(base_timestamp, NULL, 0);
 }

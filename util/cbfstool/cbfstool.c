@@ -327,10 +327,18 @@ static struct mmap_window mmap_window_table[MMAP_MAX_WINDOWS];
 static void add_mmap_window(size_t flash_offset, size_t host_offset,
 			    size_t window_size)
 {
+	printf("%lx %lx %lx\n", flash_offset, host_offset,window_size);
+
 	if (mmap_window_table_size >= MMAP_MAX_WINDOWS) {
 		ERROR("Too many memory map windows\n");
 		return;
 	}
+
+	printf("= mmap_window_table 0x%08zx 0x%08zx 0x%08zx\n",
+		flash_offset,
+		host_offset,
+		window_size
+	);
 
 	mmap_window_table[mmap_window_table_size].flash_space.offset = flash_offset;
 	mmap_window_table[mmap_window_table_size].host_space.offset = host_offset;
@@ -377,6 +385,8 @@ static int decode_mmap_arg(char *arg)
 		return 1;
 	}
 
+printf("AA1\n");
+
 	add_mmap_window(mmap_args.flash_base, mmap_args.mmap_base, mmap_args.mmap_size);
 	return 0;
 }
@@ -394,15 +404,26 @@ static bool create_mmap_windows(void)
 	// No memory map provided, use a default one
 	if (mmap_window_table_size == 0) {
 		const size_t image_size = partitioned_file_total_size(param.image_file);
-		printf("Image SIZE %zu\n", image_size);
+
+printf("==========================\n");
+printf("imagesize %zu, window 0x%08x\n", image_size, DEFAULT_DECODE_WINDOW_MAX_SIZE);
+
 		const size_t std_window_size = MIN(DEFAULT_DECODE_WINDOW_MAX_SIZE, image_size);
+
+		printf("window_size %zu 0x%08zx\n", std_window_size, std_window_size);
+
 		const size_t std_window_flash_offset = image_size - std_window_size;
+
+printf("flash_offset %zu\n", std_window_flash_offset);
 
 		/*
 		 * Default decode window lives just below 4G boundary in host space and maps up to a
 		 * maximum of 16MiB. If the window is smaller than 16MiB, the SPI flash window is mapped
 		 * at the top of the host window just below 4G.
 		 */
+
+printf("= DECODE_WINDOW_TOP 0x%08llx\n", DEFAULT_DECODE_WINDOW_TOP);
+
 		add_mmap_window(std_window_flash_offset, DEFAULT_DECODE_WINDOW_TOP - std_window_size, std_window_size);
 	} else {
 		/*
@@ -1177,6 +1198,8 @@ static int cbfstool_convert_mkstage(struct buffer *buffer, uint32_t *offset,
 
 	if (param.stage_xip) {
 		uint32_t host_space_address = convert_addr_space(param.image_region, *offset);
+
+		printf("AA3 %x\n", host_space_address);
 		assert(IS_HOST_SPACE_ADDRESS(host_space_address));
 		ret = parse_elf_to_xip_stage(buffer, &output, host_space_address,
 					     param.ignore_section, stageheader);
@@ -1406,6 +1429,8 @@ static int cbfs_create(void)
 	}
 
 	struct buffer bootblock;
+	// bootblock.size = 0;
+
 	if (!param.bootblock) {
 		DEBUG("-B not given, creating image without bootblock.\n");
 		if (buffer_create(&bootblock, 0, "(dummy)") != 0)
@@ -1423,35 +1448,35 @@ static int cbfs_create(void)
 			// Make sure there's at least enough room for rel_offset
 			param.baseaddress = param.size -
 					MAX(bootblock.size, sizeof(int32_t));
-			DEBUG("x86 -> bootblock lies at end of ROM (%#x).\n",
+			INFO("x86 -> bootblock lies at end of ROM (%#x).\n",
 			      param.baseaddress);
 		} else {
 			param.baseaddress = 0;
-			DEBUG("bootblock starts at address 0x0.\n");
+			INFO("bootblock starts at address 0x0.\n");
 		}
 	}
 	if (!param.headeroffset_assigned) {
 		if (param.arch == CBFS_ARCHITECTURE_X86) {
 			param.headeroffset = param.baseaddress -
 					     sizeof(struct cbfs_header);
-			DEBUG("x86 -> CBFS header before bootblock (%#x).\n",
+			INFO("x86 -> CBFS header before bootblock (%#x).\n",
 				param.headeroffset);
 		} else {
 			param.headeroffset = align_up(param.baseaddress +
 				bootblock.size, sizeof(uint32_t));
-			DEBUG("CBFS header placed behind bootblock (%#x).\n",
+			INFO("CBFS header placed behind bootblock (%#x).\n",
 				param.headeroffset);
 		}
 	}
 	if (!param.cbfsoffset_assigned) {
 		if (param.arch == CBFS_ARCHITECTURE_X86) {
 			param.cbfsoffset = 0;
-			DEBUG("x86 -> CBFS entries start at address 0x0.\n");
+			INFO("x86 -> CBFS entries start at address 0x0.\n");
 		} else {
 			param.cbfsoffset = align_up(param.headeroffset +
 						    sizeof(struct cbfs_header),
 						    CBFS_ALIGNMENT);
-			DEBUG("CBFS entries start beind master header (%#x).\n",
+			INFO("CBFS entries start beind master header (%#x).\n",
 			      param.cbfsoffset);
 		}
 	}
@@ -1677,7 +1702,7 @@ static int cbfs_write(void)
 			return 1;
 		}
 		if (param.u64val == (uint64_t)-1) {
-			WARN("Written area will abut %s of target region: any unused space will keep its current contents\n",
+			WARN("Written area will about %s of target region: any unused space will keep its current contents\n",
 					param.fill_partial_upward ? "bottom" : "top");
 		} else if (param.u64val > 0xff) {
 			ERROR("given fill value (%x) is larger than a byte\n", (unsigned)(param.u64val & 0xff));

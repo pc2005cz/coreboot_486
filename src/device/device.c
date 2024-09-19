@@ -159,7 +159,7 @@ static void read_resources(struct bus *bus)
 {
 	struct device *curdev;
 
-	printk(BIOS_SPEW, "%s %s bus %d link: %d\n", dev_path(bus->dev),
+	printk(BIOS_INFO, "%s %s bus %d link: %d\n", dev_path(bus->dev),
 	       __func__, bus->secondary, bus->link_num);
 
 	/* Walk through all devices and find which resources they need. */
@@ -183,7 +183,7 @@ static void read_resources(struct bus *bus)
 			read_resources(link);
 	}
 	post_log_clear();
-	printk(BIOS_SPEW, "%s %s bus %d link: %d done\n",
+	printk(BIOS_INFO, "%s %s bus %d link: %d done\n",
 	       dev_path(bus->dev), __func__, bus->secondary, bus->link_num);
 }
 
@@ -289,7 +289,7 @@ void assign_resources(struct bus *bus)
 {
 	struct device *curdev;
 
-	printk(BIOS_SPEW, "%s %s, bus %d link: %d\n",
+	printk(BIOS_INFO, "%s %s, bus %d link: %d\n",
 	       dev_path(bus->dev), __func__, bus->secondary, bus->link_num);
 
 	for (curdev = bus->children; curdev; curdev = curdev->sibling) {
@@ -305,8 +305,9 @@ void assign_resources(struct bus *bus)
 		curdev->ops->set_resources(curdev);
 	}
 	post_log_clear();
-	printk(BIOS_SPEW, "%s %s, bus %d link: %d done\n",
+	printk(BIOS_INFO, "%s %s, bus %d link: %d done\n",
 	       dev_path(bus->dev), __func__, bus->secondary, bus->link_num);
+
 }
 
 /**
@@ -488,19 +489,29 @@ void dev_configure(void)
 
 	/* Read the resources for the entire tree. */
 
-	printk(BIOS_INFO, "Reading resources...\n");
+	printk(BIOS_SPEW, "Reading resources...\n");
 	read_resources(root->link_list);
-	printk(BIOS_INFO, "Done reading resources.\n");
+	printk(BIOS_SPEW, "Done reading resources.\n");
 
-	print_resource_tree(root, BIOS_SPEW, "After reading.");
+	print_resource_tree(root, BIOS_INFO, "After reading.");
 
 	allocate_resources(root);
 
 	assign_resources(root->link_list);
 	printk(BIOS_INFO, "Done setting resources.\n");
-	print_resource_tree(root, BIOS_SPEW, "After assigning values.");
+	print_resource_tree(root, BIOS_INFO, "After assigning values.");	//pc2005
 
 	printk(BIOS_INFO, "Done allocating resources.\n");
+
+#if 0
+	printk(BIOS_INFO, "0:%08x\n", pci_s_read_config32(PCI_DEV(0,5,0), PCI_BASE_ADDRESS_0));
+	printk(BIOS_INFO, "1:%08x\n", pci_s_read_config32(PCI_DEV(0,5,0), PCI_BASE_ADDRESS_1));
+	printk(BIOS_INFO, "2:%08x\n", pci_s_read_config32(PCI_DEV(0,5,0), PCI_BASE_ADDRESS_2));
+	printk(BIOS_INFO, "3:%08x\n", pci_s_read_config32(PCI_DEV(0,5,0), PCI_BASE_ADDRESS_3));
+	printk(BIOS_INFO, "4:%08x\n", pci_s_read_config32(PCI_DEV(0,5,0), PCI_BASE_ADDRESS_4));
+	printk(BIOS_INFO, "5:%08x\n", pci_s_read_config32(PCI_DEV(0,5,0), PCI_BASE_ADDRESS_5));
+	printk(BIOS_INFO, "r:%08x\n", pci_s_read_config32(PCI_DEV(0,5,0), PCI_ROM_ADDRESS));
+#endif
 }
 
 /**

@@ -1826,6 +1826,9 @@ void pci_assign_irqs(struct device *dev, const unsigned char pIntAtoD[4])
 {
 	u8 slot, line, irq;
 
+printk(BIOS_DEBUG, "AAAAAAIIIIRRRRQQQ\n");
+
+
 	/* Each device may contain up to eight functions. */
 	slot = dev->path.pci.devfn >> 3;
 

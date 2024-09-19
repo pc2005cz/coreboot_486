@@ -454,8 +454,8 @@ size_t write_coreboot_forwarding_table(uintptr_t entry, uintptr_t target)
 {
 	struct lb_header *head;
 
-	printk(BIOS_DEBUG, "Writing table forward entry at %p\n",
-		(void *)entry);
+	printk(BIOS_DEBUG, "Writing table forward entry at %p to target %p\n",
+		(void *)entry, (void *)target);
 
 	head = lb_table_init(entry);
 	lb_forward(head, (struct lb_header *)target);
@@ -593,5 +593,17 @@ void *write_tables(void)
 
 	/* Print CBMEM sections */
 	cbmem_list();
+
+#if 0
+	printk(BIOS_DEBUG, "0x500 table: ");
+	for (unsigned idx=0;idx<40;idx++) {
+		u8 * dptr = (u8 *)0x500;
+		printk(BIOS_DEBUG, "%02x ", dptr[idx]);
+	}
+	printk(BIOS_DEBUG, "\n");
+#endif
+
+
+
 	return (void *)cbtable_start;
 }

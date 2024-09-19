@@ -144,6 +144,9 @@ static int cbfs_file_get_compression_info(struct cbfs_file *entry,
 	for (struct cbfs_file_attribute *attr = cbfs_file_first_attr(entry);
 	     attr != NULL;
 	     attr = cbfs_file_next_attr(entry, attr)) {
+
+//		printf("    attr->tag %x\n", be32toh(attr->tag));
+
 		if (be32toh(attr->tag) == CBFS_FILE_ATTR_TAG_COMPRESSION) {
 			struct cbfs_file_attr_compression *ac =
 				(struct cbfs_file_attr_compression *)attr;
@@ -756,7 +759,7 @@ int cbfs_add_entry(struct cbfs_image *image, struct buffer *buffer,
 		next = cbfs_find_next_entry(image, entry);
 		addr_next = cbfs_get_entry_addr(image, next);
 
-		DEBUG("cbfs_add_entry: space at 0x%x+0x%x(%d) bytes\n",
+		INFO("cbfs_add_entry: space at 0x%x+0x%x(%d) bytes\n",
 		      addr, addr_next - addr, addr_next - addr);
 
 		/* Will the file fit? Don't yet worry if we have space for a new
@@ -777,7 +780,7 @@ int cbfs_add_entry(struct cbfs_image *image, struct buffer *buffer,
 				ERROR("Not enough space for header.\n");
 				break;
 			} else if (content_offset + buffer->size > addr_next) {
-				ERROR("Not enough space for content.\n");
+				ERROR("Not enough space for content. co:%u bs:%lu an:%u\n", content_offset, buffer->size,addr_next);
 				break;
 			}
 		}

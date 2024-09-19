@@ -161,6 +161,12 @@ int parse_elf_to_stage(const struct buffer *input, struct buffer *output,
 		if (mend > mem_end)
 			mem_end = mend;
 
+
+		printf("++++++++++C 0x%08lx 0x%08lx\n",
+			phdr[i].p_paddr,
+			phdr[i].p_vaddr
+		);
+
 		if (virt_to_phys == 0)
 			virt_to_phys = phdr[i].p_paddr - phdr[i].p_vaddr;
 	}
@@ -311,7 +317,11 @@ int parse_elf_to_xip_stage(const struct buffer *input, struct buffer *output,
 	/* Single loadable segment. The entire segment moves to final
 	 * location from based on virtual address of loadable segment. */
 	adjustment = location - pelf->phdr->p_vaddr;
-	DEBUG("Relocation adjustment: %08x\n", adjustment);
+	printf("Relocation adjustment: 0x%08x-0x%08lx 0x%08x\n",
+		location,
+		pelf->phdr->p_vaddr,
+		adjustment
+	);
 
 	fill_cbfs_stageheader(stageheader,
 			      (uint32_t)pelf->ehdr.e_entry + adjustment,

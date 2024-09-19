@@ -103,11 +103,13 @@ int do_lzma_compress(char *in, int in_len, char *out, int *out_len)
 
 	switch (props.algo) {
 	case 0:	// quick: HC4
+INFO("compression level 1\n");
 		props.btMode = 0;
 		props.level = 1;
 		break;
 	case 1:	// full: BT4
 	default:
+INFO("compression level 9\n");
 		props.level = 9;
 		props.btMode = 1;
 		props.numHashBytes = 4;

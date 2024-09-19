@@ -423,6 +423,7 @@ static void boot_state_schedule_static_entries(void)
 	}
 }
 
+//RAMSTAGE
 void main(void)
 {
 	/*
@@ -445,6 +446,27 @@ void main(void)
 	/* console_init() MUST PRECEDE ALL printk()! Additionally, ensure
 	 * it is the very first thing done in ramstage.*/
 	console_init();
+
+#if 0
+	void* current_address;
+
+	// asm volatile("rdtsc" :::);
+	// asm volatile("rdtsc" :::);
+	// asm volatile("rdtsc" :::);
+	// asm volatile("rdtsc" :::);
+	// asm volatile("rdtsc" :::);
+	asm volatile(
+
+		"call get_eip\n\t"
+		"get_eip:\n\t"
+		"pop %%eax\n\t"
+		"movl %%eax, %0\n\t"
+		: "=r" (current_address)::"%eax"
+	);
+
+	printk(BIOS_INFO, "** current address: %p\n", current_address);
+#endif
+
 	post_code(POST_CONSOLE_READY);
 
 	exception_init();
@@ -453,6 +475,9 @@ void main(void)
 	 * CBMEM needs to be recovered because timestamps, ACPI, etc rely on
 	 * the cbmem infrastructure being around. Explicitly recover it.
 	 */
+
+	// printk(BIOS_INFO, "TODO cbmem_initialize\n");
+
 	cbmem_initialize();
 
 	timestamp_add_now(TS_RAMSTAGE_START);

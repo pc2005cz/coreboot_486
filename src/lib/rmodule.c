@@ -67,12 +67,18 @@ int rmodule_memory_size(const struct rmodule *module)
 
 void *rmodule_parameters(const struct rmodule *module)
 {
+	// printk(BIOS_NOTICE, "U1\n");
+
 	if (!rmodule_is_loaded(module))
 		return NULL;
+
+	// printk(BIOS_NOTICE, "U2\n");
 
 	/* Indicate if there are no parameters. */
 	if (module->header->parameters_begin == module->header->parameters_end)
 		return NULL;
+
+	// printk(BIOS_NOTICE, "U3\n");
 
 	return rmodule_load_addr(module, module->header->parameters_begin);
 }
@@ -118,10 +124,14 @@ static void rmodule_copy_payload(const struct rmodule *module)
 	       module->location, rmodule_entry(module),
 	       module->payload_size, rmodule_memory_size(module));
 
+	printk(BIOS_DEBUG, "!!CP %p<-%p\n", module->location, module->payload);
+
 	/* No need to copy the payload if the load location and the
 	 * payload location are the same. */
-	if (module->location == module->payload)
+	if (module->location == module->payload) {
+		printk(BIOS_DEBUG, " skip same location\n");
 		return;
+	}
 
 	memcpy(module->location, module->payload, module->payload_size);
 }
@@ -180,13 +190,29 @@ int rmodule_load(void *base, struct rmodule *module)
 	 *     address the relocations need to be processed before the bss.
 	 */
 	module->location = base;
+
+	// printk(BIOS_DEBUG, "RM1\n");
+
 	rmodule_copy_payload(module);
-	if (rmodule_relocate(module))
+
+	// printk(BIOS_DEBUG, "RM2\n");
+
+	if (rmodule_relocate(module)) {
+		printk(BIOS_DEBUG, "RM3\n");
+
 		return -1;
+	}
+
+	// printk(BIOS_DEBUG, "RM4\n");
+
 	rmodule_clear_bss(module);
+
+	// printk(BIOS_DEBUG, "RM5\n");
 
 	prog_segment_loaded((uintptr_t)module->location,
 				rmodule_memory_size(module), SEG_FINAL);
+
+	// printk(BIOS_DEBUG, "RM6\n");
 
 	return 0;
 }
@@ -250,22 +276,37 @@ int rmodule_stage_load(struct rmod_stage_load *rsl)
 {
 	struct rmodule rmod_stage;
 
+	// printk(BIOS_NOTICE, "T1\n");
+
 	if (rsl->prog == NULL || prog_name(rsl->prog) == NULL)
 		return -1;
+
+	// printk(BIOS_NOTICE, "T2\n");
 
 	if (prog_locate_hook(rsl->prog))
 		return -1;
 
+	// printk(BIOS_NOTICE, "T3\n");
+
 	void *rmod_loc = cbfs_alloc(prog_name(rsl->prog),
 				    rmodule_cbfs_allocator, rsl, NULL);
+
+	// printk(BIOS_NOTICE, "T4\n");
+
 	if (!rmod_loc)
 		return -1;
+
+	// printk(BIOS_NOTICE, "T5\n");
 
 	if (rmodule_parse(rmod_loc, &rmod_stage))
 		return -1;
 
+	// printk(BIOS_NOTICE, "T6\n");
+
 	if (rmodule_load(rmod_loc + sizeof(struct rmodule_header), &rmod_stage))
 		return -1;
+
+	// printk(BIOS_NOTICE, "T7\n");
 
 	prog_set_area(rsl->prog, rmod_stage.location,
 			rmodule_memory_size(&rmod_stage));
@@ -274,6 +315,8 @@ int rmodule_stage_load(struct rmod_stage_load *rsl)
 	rsl->params = rmodule_parameters(&rmod_stage);
 
 	prog_set_entry(rsl->prog, rmodule_entry(&rmod_stage), rsl->params);
+
+	// printk(BIOS_NOTICE, "T10 fin ok\n");
 
 	return 0;
 }

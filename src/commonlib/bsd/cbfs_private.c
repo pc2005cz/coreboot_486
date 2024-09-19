@@ -7,14 +7,31 @@
 static enum cb_err read_next_header(cbfs_dev_t dev, size_t *offset, struct cbfs_file *buffer,
 				    const size_t devsize)
 {
-	DEBUG("Looking for next file @%#zx...\n", *offset);
+	DEBUG("Looking for next file @%#zx\n", *offset);
+	// DEBUG("Looking for next file @%#zx s:%#zx\n", *offset, devsize);
 	*offset = ALIGN_UP(*offset, CBFS_ALIGNMENT);
-	while (*offset + sizeof(*buffer) < devsize) {
-		if (cbfs_dev_read(dev, buffer, *offset, sizeof(*buffer)) != sizeof(*buffer))
-			return CB_CBFS_IO;
 
-		if (memcmp(buffer->magic, CBFS_FILE_MAGIC, sizeof(buffer->magic)) == 0)
+	// printk(BIOS_DEBUG, "F0\n");
+
+	while (*offset + sizeof(*buffer) < devsize) {
+
+		// printk(BIOS_DEBUG, "F1 @%#zx...\n", *offset);
+
+		//TODO https://elixir.bootlin.com/coreboot/4.19/source/src/commonlib/region.c#L78
+
+		if (cbfs_dev_read(dev, buffer, *offset, sizeof(*buffer)) != sizeof(*buffer)) {
+			// printk(BIOS_DEBUG, "F2\n");
+			return CB_CBFS_IO;
+		}
+
+		// printk(BIOS_DEBUG, "F3\n");
+
+		if (memcmp(buffer->magic, CBFS_FILE_MAGIC, sizeof(buffer->magic)) == 0) {
+			// printk(BIOS_DEBUG, "F4\n");
 			return CB_SUCCESS;
+		}
+
+		// printk(BIOS_DEBUG, "F5\n");
 
 		*offset += CBFS_ALIGNMENT;
 	}
@@ -32,20 +49,28 @@ enum cb_err cbfs_walk(cbfs_dev_t dev, enum cb_err (*walker)(cbfs_dev_t dev, size
 	const size_t devsize = cbfs_dev_size(dev);
 	struct vb2_digest_context dc;
 
+	// printk(BIOS_DEBUG, "E1\n");
+
 	assert(CBFS_ENABLE_HASHING || (!metadata_hash && !(flags & CBFS_WALK_WRITEBACK_HASH)));
 	if (do_hash && vb2_digest_init(&dc, CBFS_HASH_HWCRYPTO, metadata_hash->algo, 0))
 		return CB_ERR_ARG;
+
+	// printk(BIOS_DEBUG, "E2\n");
 
 	size_t offset = 0;
 	enum cb_err ret_header;
 	enum cb_err ret_walker = CB_CBFS_NOT_FOUND;
 	union cbfs_mdata mdata;
 	while ((ret_header = read_next_header(dev, &offset, &mdata.h, devsize)) == CB_SUCCESS) {
+		// printk(BIOS_DEBUG, "E3\n");
+
 		const uint32_t attr_offset = be32toh(mdata.h.attributes_offset);
 		const uint32_t data_offset = be32toh(mdata.h.offset);
 		const uint32_t data_length = be32toh(mdata.h.len);
 		const uint32_t type = be32toh(mdata.h.type);
 		const bool empty = (type == CBFS_TYPE_DELETED || type == CBFS_TYPE_NULL);
+
+		// printk(BIOS_DEBUG, "E4\n");
 
 		DEBUG("Found CBFS header @%#zx (type %d, attr +%#x, data +%#x, length %#x)\n",
 		      offset, type, attr_offset, data_offset, data_length);
@@ -56,8 +81,12 @@ enum cb_err cbfs_walk(cbfs_dev_t dev, enum cb_err (*walker)(cbfs_dev_t dev, size
 			continue;
 		}
 
+		// printk(BIOS_DEBUG, "E5\n");
+
 		if (empty && !(flags & CBFS_WALK_INCLUDE_EMPTY))
 			goto next_file;
+
+		// printk(BIOS_DEBUG, "E6\n");
 
 		/* When hashing we need to read everything. Otherwise skip the attributes.
 		   attr_offset may be 0, which means there are no attributes. */
@@ -71,6 +100,8 @@ enum cb_err cbfs_walk(cbfs_dev_t dev, enum cb_err (*walker)(cbfs_dev_t dev, size
 			goto next_file;
 		}
 
+		// printk(BIOS_DEBUG, "E7\n");
+
 		/* Read the rest of the metadata (filename, and possibly attributes). */
 		assert(todo > 0 && todo <= sizeof(mdata) - sizeof(mdata.h));
 		if (cbfs_dev_read(dev, mdata.raw + sizeof(mdata.h),
@@ -79,6 +110,8 @@ enum cb_err cbfs_walk(cbfs_dev_t dev, enum cb_err (*walker)(cbfs_dev_t dev, size
 		/* Force filename null-termination, just in case. */
 		mdata.raw[attr_offset ? attr_offset - 1 : data_offset - 1] = '\0';
 		DEBUG("File name: '%s'\n", mdata.h.filename);
+
+		// printk(BIOS_DEBUG, "E8\n");
 
 		if (do_hash && !empty && vb2_digest_extend(&dc, mdata.raw, data_offset))
 			return CB_ERR;
@@ -90,14 +123,22 @@ enum cb_err cbfs_walk(cbfs_dev_t dev, enum cb_err (*walker)(cbfs_dev_t dev, size
 		if (ret_walker == CB_CBFS_IO || (ret_walker != CB_CBFS_NOT_FOUND && !do_hash))
 			return ret_walker;
 
+		// printk(BIOS_DEBUG, "E9\n");
+
 next_file:
 		offset += data_offset + data_length;
 	}
 
+	// printk(BIOS_DEBUG, "E10\n");
+
 	if (ret_header != CB_CBFS_NOT_FOUND)
 		return ret_header;
 
+	// printk(BIOS_DEBUG, "E11\n");
+
 	if (do_hash) {
+		//printk(BIOS_DEBUG, "E12\n");
+
 		uint8_t real_hash[VB2_MAX_DIGEST_SIZE];
 		size_t hash_size = vb2_digest_size(metadata_hash->algo);
 		if (vb2_digest_finalize(&dc, real_hash, hash_size))
@@ -107,6 +148,8 @@ next_file:
 		else if (memcmp(metadata_hash->raw, real_hash, hash_size) != 0)
 			return CB_CBFS_HASH_MISMATCH;
 	}
+
+	//printk(BIOS_DEBUG, "E13\n");
 
 	return ret_walker;
 }
