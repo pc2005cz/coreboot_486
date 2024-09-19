@@ -1,0 +1,8 @@
+Board name: ABit AB-PB4
+Category: retro
+Board URL: https://theretroweb.com/motherboards/s/abit-ab-pb4-rev-1.3
+ROM package: DIP-32
+ROM protocol: Parallel
+ROM socketed: y
+Flashrom support: y
+Release year: 1996

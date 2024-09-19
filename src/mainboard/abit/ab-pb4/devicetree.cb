@@ -1,0 +1,22 @@
+chip northbridge/ali/m1489
+
+	device cpu_cluster 0 on ops cpu_bus_ops end
+
+	device domain 0 on
+		ops pci_domain_ops
+
+		device pci 00.0 on end # host bridge
+
+		device pci 03.0 on end # first PCI (near cpu)
+		device pci 04.0 on end # middle PCI
+		device pci 05.0 on end # last PCI
+
+		#chip superio/winbond/w83787if
+
+	end
+
+
+#	chip southbridge/ali/m1487
+
+
+end

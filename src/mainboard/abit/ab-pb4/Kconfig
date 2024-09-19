@@ -1,0 +1,27 @@
+if BOARD_ABIT_AB_PB4
+
+config BOARD_SPECIFIC_OPTIONS
+	def_bool y
+	select CPU_486
+	select BOARD_ROMSIZE_KB_128
+	select MISSING_BOARD_RESET
+	select NORTHBRIDGE_ALI_M1489
+	select SOUTHBRIDGE_ALI_M1487
+	select SUPERIO_WINBOND_W83787IF
+	select HAVE_OPTION_TABLE
+#	 select HAVE_CMOS_DEFAULT
+	select HAVE_PIRQ_TABLE
+	select NO_MONOTONIC_TIMER
+
+config MAINBOARD_DIR
+	default "abit/ab-pb4"
+
+config MAINBOARD_PART_NUMBER
+	default "AB-PB4"
+
+config IRQ_SLOT_COUNT
+	int
+	default 3
+#TODO 4
+
+endif #BOARD_ABIT_AB_PB4

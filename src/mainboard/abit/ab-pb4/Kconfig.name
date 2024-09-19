@@ -1,0 +1,4 @@
+config BOARD_ABIT_AB_PB4
+	bool "ABit AB-PB4"
+	help
+	  experimental

@@ -1,0 +1,15 @@
+if VENDOR_ABIT
+
+choice
+	prompt "Mainboard model"
+
+source "src/mainboard/abit/*/Kconfig.name"
+
+endchoice
+
+source "src/mainboard/abit/*/Kconfig"
+
+config MAINBOARD_VENDOR
+	default "ABit"
+
+endif # VENDOR_ABIT
