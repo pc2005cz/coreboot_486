@@ -17,21 +17,28 @@ DECLARE_SPIN_LOCK(console_lock)
 
 #define TRACK_CONSOLE_TIME (!ENV_SMM && CONFIG(HAVE_MONOTONIC_TIMER))
 
+#if 0
 static struct mono_time mt_start, mt_stop;
+#endif
 static long console_usecs;
 
 static void console_time_run(void)
 {
+	//TODO timery pc2005
+#if 0
 	if (TRACK_CONSOLE_TIME && boot_cpu())
 		timer_monotonic_get(&mt_start);
+#endif
 }
 
 static void console_time_stop(void)
 {
+#if 0
 	if (TRACK_CONSOLE_TIME && boot_cpu()) {
 		timer_monotonic_get(&mt_stop);
 		console_usecs += mono_time_diff_microseconds(&mt_start, &mt_stop);
 	}
+#endif
 }
 
 void console_time_report(void)
