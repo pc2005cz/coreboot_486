@@ -11,8 +11,8 @@ endif
 # $1 stage name
 # $2 optional _EARLY suffix for CONFIG_BOOT_DEVICE_SPI_FLASH_RW_NOMMAP(_EARLY)
 define add_spi_stage
-$(1)-y += spi-generic.c
-$(1)-y += bitbang.c
+#$(1)-y += spi-generic.c
+#$(1)-y += bitbang.c
 $(1)-$(CONFIG_COMMON_CBFS_SPI_WRAPPER) += cbfs_spi.c
 $(1)-$(CONFIG_SPI_FLASH) += spi_flash.c
 $(1)-$(CONFIG_SPI_SDCARD) += spi_sdcard.c
