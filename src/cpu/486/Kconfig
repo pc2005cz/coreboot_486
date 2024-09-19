@@ -1,0 +1,53 @@
+## SPDX-License-Identifier: GPL-2.0-only
+
+config CPU_486
+	bool
+	select ARCH_486
+	select USE_MARCH_486
+
+if CPU_486
+
+choice
+	prompt "SMM support"
+	default CPU_486_ASEG_SMM
+
+config CPU_486_NO_SMM
+	bool "No SMM"
+	select NO_SMM
+
+config CPU_486_ASEG_SMM
+	bool "SMM in ASEG"
+	select SMM_ASEG
+
+config CPU_486_TSEG_SMM
+	bool "SMM in TSEG"
+	select SMM_TSEG
+
+endchoice
+
+
+#TODO move into ali northbridge, right above max RAM for CPU, for chipset it is 0 due to aliasing
+#shouldn't be at start of the block (could be overridden by DRAM/L2 check)
+
+#TODO NOTICE, for DRAM detection it must be above maximal single bank size or not at single "1" bit boundary
+
+config DCACHE_RAM_BASE
+	hex
+#	default 0x01000000
+#	default 0x04560000
+#	default 0x00200000
+#	default 0x08000000
+	default 0x001a0000
+
+config DCACHE_RAM_SIZE
+	hex
+	default 0x02000
+
+config DCACHE_BSP_STACK_SIZE
+	hex
+	default 0x1000
+
+config HEAP_SIZE
+	default 0x8000
+
+endif
