@@ -47,16 +47,16 @@ verstage-$(CONFIG_SOFTWARE_I2C) += software_i2c.c
 romstage-$(CONFIG_SOFTWARE_I2C) += software_i2c.c
 ramstage-$(CONFIG_SOFTWARE_I2C) += software_i2c.c
 
-bootblock-y += i2c.c
-verstage-y += i2c.c
-romstage-y += i2c.c
-ramstage-y += i2c.c
-ramstage-y += i2c_bus.c
+#bootblock-y += i2c.c
+#verstage-y += i2c.c
+#romstage-y += i2c.c
+#ramstage-y += i2c.c
+#ramstage-y += i2c_bus.c
 
-bootblock-y += mmio.c
-verstage-y += mmio.c
-romstage-y += mmio.c
-ramstage-y += mmio.c
+#bootblock-y += mmio.c
+#verstage-y += mmio.c
+#romstage-y += mmio.c
+#ramstage-y += mmio.c
 
 ramstage-y += resource_allocator_common.c
 ramstage-y += resource_allocator_v4.c
@@ -64,4 +64,4 @@ ramstage-y += resource_allocator_v4.c
 ramstage-$(CONFIG_XHCI_UTILS) += xhci.c
 
 ramstage-y += gpio.c
-ramstage-y += mdio.c
+#ramstage-y += mdio.c
