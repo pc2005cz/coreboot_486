@@ -14,6 +14,13 @@
 #include <smp/spinlock.h>
 #include <timer.h>
 
+#include <arch/pci_io_cfg.h>
+
+#if CONFIG(NORTHBRIDGE_ALI_M1489)
+#	include "../../northbridge/ali/m1489/regs.h"
+#elif CONFIG(NORTHBRIDGE_UMC_UM8881)
+#endif
+
 /** Pointer to the last device */
 extern struct device *last_dev;
 /** Linked list of free resources */
@@ -238,6 +245,22 @@ static void set_vga_bridge_bits(void)
 		vga->command |= (PCI_COMMAND_MEMORY | PCI_COMMAND_IO);
 		vga_pri = vga;
 		bus = vga->bus;
+
+#if CONFIG(NORTHBRIDGE_ALI_M1489)
+		//pc2005
+		printk(BIOS_INFO, "VGA hole on PCI\n");
+		cfg_write(0x20, cfg_read(0x20) | 0xc0);
+		//use shadow for entire C
+		cfg_write(0x13, cfg_read(0x13) | 0xff);
+#endif
+	} else {
+#if CONFIG(NORTHBRIDGE_ALI_M1489)
+		//use ISA cycles
+		printk(BIOS_INFO, "VGA hole on ISA\n");
+		cfg_write(0x20, cfg_read(0x20) & ~0xc0);
+		//C is ISA native
+		cfg_write(0x13, cfg_read(0x13) & ~0xffU);
+#endif
 	}
 
 	/* Now walk up the bridges setting the VGA enable. */
