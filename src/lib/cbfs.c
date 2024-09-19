@@ -572,6 +572,7 @@ void *_cbfs_alloc(const char *name, cbfs_allocator_t allocator, void *arg,
 	return ret;
 }
 
+#if 0
 void *_cbfs_unverified_area_alloc(const char *area, const char *name,
 				  cbfs_allocator_t allocator, void *arg, size_t *size_out)
 {
@@ -594,6 +595,7 @@ void *_cbfs_unverified_area_alloc(const char *area, const char *name,
 
 	return do_alloc(&mdata, &file_rdev, allocator, arg, size_out, true);
 }
+#endif
 
 void *_cbfs_default_allocator(void *arg, size_t size, const union cbfs_mdata *unused)
 {

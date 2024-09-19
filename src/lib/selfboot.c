@@ -22,12 +22,16 @@ typedef int (*checker_t)(struct cbfs_payload_segment *cbfssegs, void *args);
 static void cbfs_decode_payload_segment(struct cbfs_payload_segment *segment,
 		const struct cbfs_payload_segment *src)
 {
-	segment->type        = read_be32(&src->type);
-	segment->compression = read_be32(&src->compression);
-	segment->offset      = read_be32(&src->offset);
-	segment->load_addr   = read_be64(&src->load_addr);
-	segment->len         = read_be32(&src->len);
-	segment->mem_len     = read_be32(&src->mem_len);
+	struct cbfs_payload_segment local;
+
+	memcpy(&local, src, sizeof(struct cbfs_payload_segment));
+
+	segment->type	= read_be32(&local.type);
+	segment->compression = read_be32(&local.compression);
+	segment->offset      = read_be32(&local.offset);
+	segment->load_addr   = read_be64(&local.load_addr);
+	segment->len	 = read_be32(&local.len);
+	segment->mem_len     = read_be32(&local.mem_len);
 }
 
 static int segment_targets_type(void *dest, unsigned long memsz,
