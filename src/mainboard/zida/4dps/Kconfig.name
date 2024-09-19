@@ -1,0 +1,4 @@
+config BOARD_ZIDA_4DPS
+	bool "Zida 4DPS tomatoboard"
+	help
+	  experimental, also: Taken PCI400, J-Bond PCI400

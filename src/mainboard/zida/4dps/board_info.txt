@@ -1,0 +1,8 @@
+Board name: Zida 4DPS
+Category: retro
+Board URL: https://theretroweb.com/motherboards/s/zida-4dps
+ROM package: DIP-32
+ROM protocol: Parallel
+ROM socketed: y
+Flashrom support: y
+Release year: 1995

@@ -1,0 +1,27 @@
+if BOARD_ZIDA_4DPS
+
+config BOARD_SPECIFIC_OPTIONS
+	def_bool y
+#TODO maybe into cpu/486
+	select CPU_486
+	select BOARD_ROMSIZE_KB_128
+	select MISSING_BOARD_RESET
+	select NORTHBRIDGE_SIS_85C496
+	select SOUTHBRIDGE_SIS_85C497
+	select SUPERIO_WINBOND_W83787IF
+#	 select HAVE_OPTION_TABLE
+#	 select HAVE_CMOS_DEFAULT
+	select HAVE_PIRQ_TABLE
+	select NO_MONOTONIC_TIMER
+
+config MAINBOARD_DIR
+	default "zida/4dps"
+
+config MAINBOARD_PART_NUMBER
+	default "4DPS"
+
+config IRQ_SLOT_COUNT
+	int
+	default 3
+
+endif #BOARD_ZIDA_4DPS

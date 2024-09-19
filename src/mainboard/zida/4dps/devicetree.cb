@@ -1,0 +1,10 @@
+chip northbridge/sis/85c496
+
+	device domain 0 on
+
+#	chip southbridge/sis/85c497
+
+
+	end
+
+end
