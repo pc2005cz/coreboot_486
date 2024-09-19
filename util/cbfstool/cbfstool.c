@@ -391,7 +391,8 @@ printf("AA1\n");
 	return 0;
 }
 
-#define DEFAULT_DECODE_WINDOW_TOP	(4ULL * GiB)
+//#define DEFAULT_DECODE_WINDOW_TOP	(4ULL * GiB)
+#define DEFAULT_DECODE_WINDOW_TOP	(0x100000ULL)	//pc2005
 #define DEFAULT_DECODE_WINDOW_MAX_SIZE	(16 * MiB)
 
 static bool create_mmap_windows(void)

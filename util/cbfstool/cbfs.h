@@ -9,7 +9,7 @@
 /* To make CBFS more friendly to ROM, fill -1 (0xFF) instead of zero. */
 #define CBFS_CONTENT_DEFAULT_VALUE	(-1)
 
-#define CBFS_HEADPTR_ADDR_X86 0xFFFFFFFC
+#define CBFS_HEADPTR_ADDR_X86 0x000FFFFC	//pc2005
 
 /* cbfstool is allowed to use this constant freely since it's not part of the
    CBFS image, so make an alias for the name that's a little less aggressive. */

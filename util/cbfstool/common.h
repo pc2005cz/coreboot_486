@@ -19,7 +19,8 @@
  * address space. This macros checks if the address is greater than 2GiB under the assumption
  * that the low MMIO lives in the top half of the 4G address space of the host.
  */
-#define IS_HOST_SPACE_ADDRESS(addr)	((uint32_t)(addr) > 0x80000000)
+//#define IS_HOST_SPACE_ADDRESS(addr)	((uint32_t)(addr) > 0x80000000)
+#define IS_HOST_SPACE_ADDRESS(addr)	((uint32_t)(addr) >= 0xe0000)	//pc2005
 
 #define unused __attribute__((unused))
 

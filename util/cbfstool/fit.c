@@ -11,7 +11,8 @@
 
 /* FIXME: This code assumes it is being executed on a little endian machine. */
 
-#define FIT_POINTER_LOCATION 0xffffffc0
+//#define FIT_POINTER_LOCATION 0xffffffc0
+#define FIT_POINTER_LOCATION 0x000fffc0	//pc2005
 #define FIT_TABLE_LOWEST_ADDRESS ((uint32_t)(-(16 << 20)))
 #define FIT_ENTRY_CHECKSUM_VALID 0x80
 #define FIT_HEADER_VERSION 0x0100
