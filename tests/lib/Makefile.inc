@@ -230,7 +230,7 @@ cbfs-lookup-no-mcache-test-mocks += cbfs_get_boot_device \
 					cbfs_mcache_lookup \
 					mem_pool_alloc \
 					mem_pool_free
-cbfs-lookup-no-mcache-test-config += CONFIG_ARCH_X86=0 \
+cbfs-lookup-no-mcache-test-config += CONFIG_ARCH_486=0 \
 				CONFIG_COLLECT_TIMESTAMPS=0 \
 				CONFIG_NO_CBFS_MCACHE=1
 

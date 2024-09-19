@@ -286,12 +286,16 @@ fi
 if [ "${TARCH}" = "x86_32" ]; then
 cat <<EOF
 
-ifneq (\$(CONFIG_USE_MARCH_586)\$(CONFIG_LP_USE_MARCH_586),)
+
+ifneq (\$(CONFIG_ARCH_486)\$(CONFIG_LP_ARCH_486),)
+	CFLAGS_${TARCH} += -march=i486 -mtune=i486 
+else ifneq (\$(CONFIG_ARCH_586)\$(CONFIG_LP_ARCH_586),)
 	CFLAGS_${TARCH} += -march=i586
 else
 	CFLAGS_${TARCH} += -march=i686
 endif
 EOF
+
 fi
 
 cat <<EOF

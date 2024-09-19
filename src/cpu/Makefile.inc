@@ -5,7 +5,15 @@ subdirs-y += amd
 subdirs-y += armltd
 subdirs-y += intel
 subdirs-y += ti
+
+ifeq ($(CONFIG_CPU_486),y)
+#for 4dps and pb4
+subdirs-$(CONFIG_CPU_486) += 486
+else
+#cannot be included if 486
 subdirs-$(CONFIG_ARCH_X86) += x86
+endif
+
 subdirs-$(CONFIG_CPU_QEMU_X86) += qemu-x86
 subdirs-$(CONFIG_CPU_POWER9) += power9
 

@@ -21,7 +21,7 @@ config DRIVER_TPM_I2C_ADDR
 
 config DRIVER_I2C_TPM_ACPI
 	bool "Generate I2C TPM ACPI device" if I2C_TPM
-	default y if ARCH_X86 && I2C_TPM
+	default y if (ARCH_X86 || ARCH_486) && I2C_TPM
 	default n
 
 config DRIVER_TPM_DISPLAY_TIS_BYTES

@@ -19,7 +19,7 @@ config TPM_GOOGLE_IMMEDIATELY_COMMIT_FW_SECDATA
 
 config POWER_OFF_ON_CR50_UPDATE
 	bool
-	default y if ARCH_X86
+	default y if ARCH_X86 || ARCH_486
 	help
 	  Power off machine while waiting for CR50 update to take effect.
 

@@ -51,7 +51,8 @@ COREBOOT_STANDARD_STAGES := decompressor bootblock verstage romstage ramstage
 MAP-decompressor := bootblock
 
 ARCHDIR-i386	:= x86
-ARCHDIR-x86_32	:= x86
+ARCHDIR-i486	:= 486
+ARCHDIR-x86_32	:= 486
 ARCHDIR-x86_64	:= x86
 ARCHDIR-arm	:= arm
 ARCHDIR-arm64	:= arm64

@@ -3,7 +3,7 @@
 config COMMON_CBFS_SPI_WRAPPER
 	bool
 	default n
-	depends on !ARCH_X86
+	depends on !(ARCH_X86 || ARCH_486)
 	depends on BOOT_DEVICE_SPI_FLASH
 	select BOOT_DEVICE_SUPPORTS_WRITES
 	help

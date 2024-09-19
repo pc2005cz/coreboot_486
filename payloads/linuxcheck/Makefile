@@ -8,6 +8,10 @@ ifeq ($(CONFIG_ARCH_X86),y)
 TARGETARCH = i386
 endif
 
+ifeq ($(CONFIG_ARCH_486),y)
+TARGETARCH = i486
+endif
+
 all: linuxcheck.elf
 
 $(LIBPAYLOAD_DIR):

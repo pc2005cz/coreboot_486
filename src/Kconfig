@@ -257,9 +257,15 @@ config INCLUDE_CONFIG_FILE
 	    config                         0x8d740    raw          3324
 	    (empty)                        0x8e480    null         3610440
 
+config INCLUDE_BUILD_INFO
+	bool "Include the coreboot build_info file into the ROM image"
+	# Default value set at the end of the file
+	help
+	  Include the build_info (~100B)
+
 config COLLECT_TIMESTAMPS
 	bool "Create a table of timestamps collected during boot"
-	default y if ARCH_X86
+	default y if ARCH_X86 || ARCH_486
 	help
 	  Make coreboot create a table of timer-ID/timer-value pairs to
 	  allow measuring time spent at different phases of the boot process.
@@ -481,7 +487,7 @@ config HAVE_RAMPAYLOAD
 
 config RAMPAYLOAD
 	bool "Enable coreboot flow without executing ramstage"
-	default y if ARCH_X86
+	default y if ARCH_X86 || ARCH_486
 	depends on HAVE_RAMPAYLOAD
 	help
 	  If this option is enabled, coreboot flow will skip ramstage
@@ -499,7 +505,7 @@ config HAVE_CONFIGURABLE_RAMSTAGE
 
 config CONFIGURABLE_RAMSTAGE
 	bool "Enable a configurable ramstage."
-	default y if ARCH_X86
+	default y if ARCH_X86 || ARCH_486
 	depends on HAVE_CONFIGURABLE_RAMSTAGE
 	help
 	  A configurable ramstage allows you to select which parts of the ramstage
@@ -668,7 +674,7 @@ config BOOT_DEVICE_SPI_FLASH
 
 config BOOT_DEVICE_MEMORY_MAPPED
 	bool
-	default y if ARCH_X86 && BOOT_DEVICE_SPI_FLASH
+	default y if (ARCH_X86 || ARCH_486) && BOOT_DEVICE_SPI_FLASH
 	default n
 	help
 	  Inform system if SPI is memory-mapped or not.
@@ -691,7 +697,7 @@ config HEAP_SIZE
 
 config STACK_SIZE
 	hex
-	default 0x2000 if ARCH_X86
+	default 0x2000 if ARCH_X86 || ARCH_486
 	default 0x0
 
 config MAX_CPUS
@@ -712,7 +718,7 @@ config DISABLE_ACPI_HIBERNATE
 
 config RESUME_PATH_SAME_AS_BOOT
 	bool
-	default y if ARCH_X86
+	default y if ARCH_X86 || ARCH_486
 	depends on HAVE_ACPI_RESUME
 	help
 	  This option indicates that when a system resumes it takes the
@@ -732,7 +738,7 @@ config HAVE_MONOTONIC_TIMER
 config GENERIC_UDELAY
 	bool
 	depends on HAVE_MONOTONIC_TIMER
-	default y if !ARCH_X86
+	default y if !(ARCH_X86 || ARCH_486)
 	help
 	 The board/chipset uses a generic udelay function utilizing the
 	 monotonic timer.
@@ -746,7 +752,7 @@ config TIMER_QUEUE
 config COOP_MULTITASKING
 	def_bool n
 	select TIMER_QUEUE
-	depends on ARCH_X86
+	depends on ARCH_X86 || ARCH_486
 	help
 	  Cooperative multitasking allows callbacks to be multiplexed on the
 	  main thread. With this enabled it allows for multiple execution paths
@@ -845,7 +851,7 @@ config GENERATE_PIRQ_TABLE
 	  If unsure, say Y.
 
 config GENERATE_SMBIOS_TABLES
-	depends on ARCH_X86
+	depends on ARCH_X86 || ARCH_486
 	bool "Generate SMBIOS tables"
 	default y
 	help
@@ -855,7 +861,7 @@ config GENERATE_SMBIOS_TABLES
 
 config SMBIOS_TYPE41_PROVIDED_BY_DEVTREE
 	bool
-	depends on ARCH_X86
+	depends on ARCH_X86 || ARCH_486
 	help
 	  If enabled, only generate SMBIOS Type 41 entries for PCI devices in
 	  the devicetree for which Type 41 information is provided, e.g. with
@@ -935,7 +941,7 @@ config GDB_STUB
 	depends on DRIVERS_UART
 	help
 	  If enabled, you will be able to set breakpoints for gdb debugging.
-	  See src/arch/x86/c_start.S for details.
+	  See src/arch/486/c_start.S for details.
 
 config GDB_WAIT
 	bool "Wait for a GDB connection in the ramstage"
@@ -1354,7 +1360,7 @@ config UNCOMPRESSED_RAMSTAGE
 
 config NO_XIP_EARLY_STAGES
 	bool
-	default n if ARCH_X86
+	default n if ARCH_X86 || ARCH_486
 	default y
 	help
 	  Identify if early stages are eXecute-In-Place(XIP).
@@ -1386,7 +1392,7 @@ config BOOTBLOCK_CUSTOM
 
 config BOOTBLOCK_IN_CBFS
 	bool
-	default y if ARCH_X86
+	default y if ARCH_X86 || ARCH_486
 	help
 	  Select this on platforms that have a top aligned bootblock inside cbfs.
 
@@ -1408,6 +1414,9 @@ config COMPRESS_PRERAM_STAGES
 	default y
 
 config INCLUDE_CONFIG_FILE
+	default y
+
+config INCLUDE_BUILD_INFO
 	default y
 
 config BOOTSPLASH_FILE

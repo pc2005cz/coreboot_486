@@ -1,4 +1,10 @@
-ifeq ($(CONFIG_ARCH_X86),y)
+ifeq ($(CONFIG_ARCH_486),y)
+ANY86:=y
+else ifeq ($(CONFIG_ARCH_X86),y)
+ANY86:=y
+endif
+
+ifeq ($(ANY86),y)
 
 all-$(CONFIG_DRIVERS_MC146818)	+= mc146818rtc_boot.c
 

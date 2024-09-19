@@ -35,7 +35,7 @@ TEST_INCLUDES := -include $(src)/include/kconfig.h \
 TEST_INCLUDES += -I$(testsrc)/include/mocks -I$(testsrc)/include
 
 TEST_INCLUDES += -I$(src) -I$(src)/include -I$(src)/commonlib/include \
-	-I$(src)/commonlib/bsd/include -I$(src)/arch/x86/include \
+	-I$(src)/commonlib/bsd/include -I$(src)/arch/486/include \
 	-I$(top)/3rdparty/vboot/firmware/include
 
 # Path for Kconfig autoheader

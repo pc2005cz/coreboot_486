@@ -4,6 +4,7 @@ include ../../.config
 
 ARCHDIR-$(CONFIG_ARCH_ARMV7)	:= armv7
 ARCHDIR-$(CONFIG_ARCH_X86)	:= x86
+ARCHDIR-$(CONFIG_ARCH_486)	:= 486
 
 # Only Intel chipsets supported, currently.
 OBJ-$(CONFIG_SOUTHBRIDGE_INTEL_COMMON)	+= uio_usbdebug_intel.o

@@ -1,6 +1,6 @@
 config PAYLOAD_GRUB2
 	bool "GRUB2"
-	depends on ARCH_X86 || ARCH_ARM
+	depends on ARCH_X86 || ARCH_486 || ARCH_ARM
 	select PAYLOAD_BUILD_GRUB2
 	help
 	  Select this option if you want to build a coreboot image
@@ -11,7 +11,7 @@ config PAYLOAD_GRUB2
 
 config PAYLOAD_SEAGRUB
 	bool "GRUB2 atop SeaBIOS"
-	depends on ARCH_X86
+	depends on ARCH_X86 || ARCH_486
 	select PAYLOAD_BUILD_SEABIOS
 	select GRUB2_SECONDARY_PAYLOAD
 	help

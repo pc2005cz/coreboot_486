@@ -12,7 +12,7 @@ LDFLAGS += -lpci -lz
 
 CPPFLAGS += -I$(top)/util/inteltool
 CPPFLAGS += -I$(top)/src/commonlib/include -I$(top)/src/commonlib/bsd/include
-CPPFLAGS += -I$(top)/src/arch/x86/include
+CPPFLAGS += -I$(top)/src/arch/486/include
 
 
 OBJS = inteltool.o pcr.o cpu.o gpio.o gpio_groups.o rootcmplx.o powermgt.o \

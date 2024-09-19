@@ -2,7 +2,7 @@ menu "Payload"
 
 config PAYLOAD_NONE
 	bool "Don't add a payload"
-	default y if !ARCH_X86
+	default y if !ARCH_X86 && !ARCH_486
 	help
 	  Select this option if you want to create an "empty" coreboot
 	  ROM image for a certain mainboard, i.e. a coreboot ROM image
@@ -14,7 +14,7 @@ config PAYLOAD_NONE
 if !PAYLOAD_NONE
 choice
 	prompt "Payload to add"
-	default PAYLOAD_SEABIOS if ARCH_X86
+	default PAYLOAD_SEABIOS if ARCH_X86 || ARCH_486
 
 config PAYLOAD_ELF
 	bool "An ELF executable payload"
@@ -114,7 +114,7 @@ menu "Secondary Payloads"
 config COREINFO_SECONDARY_PAYLOAD
 	bool "Load coreinfo as a secondary payload"
 	default n
-	depends on ARCH_X86
+	depends on ARCH_X86 || ARCH_486
 	help
 	  coreinfo can be loaded as a secondary payload under SeaBIOS, GRUB,
 	  or any other payload that can load additional payloads.
@@ -131,7 +131,7 @@ config GRUB2_SECONDARY_PAYLOAD
 config MEMTEST_SECONDARY_PAYLOAD
 	bool "Load Memtest86+ as a secondary payload"
 	default n
-	depends on ARCH_X86
+	depends on ARCH_X86 || ARCH_486
 	help
 	  Memtest86+ can be loaded as a secondary payload under SeaBIOS, GRUB,
 	  or any other payload that can load additional payloads.
@@ -139,7 +139,7 @@ config MEMTEST_SECONDARY_PAYLOAD
 config NVRAMCUI_SECONDARY_PAYLOAD
 	bool "Load nvramcui as a secondary payload"
 	default n
-	depends on ARCH_X86 && HAVE_OPTION_TABLE
+	depends on (ARCH_X86 || ARCH_486) && HAVE_OPTION_TABLE
 	help
 	  nvramcui can be loaded as a secondary payload under SeaBIOS, GRUB,
 	  or any other payload that can load additional payloads.
@@ -147,7 +147,7 @@ config NVRAMCUI_SECONDARY_PAYLOAD
 config SEABIOS_SECONDARY_PAYLOAD
 	bool "Load SeaBIOS as a secondary payload"
 	default n
-	depends on ARCH_X86
+	depends on ARCH_X86 || ARCH_486
 	depends on !PAYLOAD_SEABIOS
 	depends on !PAYLOAD_SEAGRUB
 	select PAYLOAD_BUILD_SEABIOS
@@ -158,7 +158,7 @@ config SEABIOS_SECONDARY_PAYLOAD
 config TINT_SECONDARY_PAYLOAD
 	bool "Load tint as a secondary payload"
 	default n
-	depends on ARCH_X86
+	depends on ARCH_X86 || ARCH_486
 	help
 	  tint can be loaded as a secondary payload under SeaBIOS, GRUB,
 	  or any other payload that can load additional payloads.
@@ -166,7 +166,7 @@ config TINT_SECONDARY_PAYLOAD
 config COREDOOM_SECONDARY_PAYLOAD
 	bool "Load coreDOOM as a secondary payload"
 	default n
-	depends on ARCH_X86
+	depends on ARCH_X86 || ARCH_486
 	help
 	  coreDOOM can be loaded as a secondary payload under SeaBIOS, GRUB,
 	  or any other payload that can load additional payloads. Requires a

@@ -171,7 +171,7 @@ endif # CONSOLE_SERIAL
 config SPKMODEM
 	bool "spkmodem (console on speaker) console output"
 	default n
-	depends on ARCH_X86
+	depends on ARCH_X86 || ARCH_486
 	help
 	  Send coreboot debug output through speaker
 

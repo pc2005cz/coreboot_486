@@ -15,7 +15,7 @@ config LINUXBOOT_X86_64
 
 config LINUXBOOT_X86
 	bool "x86"
-	depends on ARCH_X86
+	depends on ARCH_X86 || ARCH_486
 	help
 	  X86 kernel and initramfs
 

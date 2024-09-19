@@ -3,7 +3,7 @@
 config PXE
 	prompt "Add a PXE ROM"
 	def_bool n
-	depends on ARCH_X86
+	depends on ARCH_X86 || ARCH_486
 
 if PXE
 menu "PXE Options"

@@ -1,6 +1,6 @@
 config DRIVERS_MC146818
 	bool
-	default y if ARCH_X86
+	default y if ARCH_X86 || ARCH_486
 	depends on PC80_SYSTEM
 
 config USE_PC_CMOS_ALTCENTURY

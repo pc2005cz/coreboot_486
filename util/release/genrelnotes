@@ -434,7 +434,7 @@ get_log_dedupe "X86 AMD" \
 	"agesa\|binarypi\|binary.pi"
 
 get_log_dedupe "X86 common" \
-	"src/arch/x86 src/cpu/x86 src/include/x86 src/include/pc80"
+	"src/arch/486 src/cpu/486 src/include/486 src/include/pc80"
 
 get_log_dedupe "ARM" \
 	"$(for codedir in $(grep -rl "_ARM" --include=Kconfig | \

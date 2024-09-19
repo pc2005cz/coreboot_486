@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 
-#if ENV_X86
+#if ENV_X86 && (!(CONFIG_CPU_486))
 #include <cpu/x86/pae.h>
 #else
 #define memset_pae(a, b, c, d, e) 0
