@@ -219,6 +219,9 @@ static size_t cbfs_load_and_decompress(const struct region_device *rdev, void *b
 		return in_size;
 
 	case CBFS_COMPRESS_LZ4:
+		return 0;
+
+#if 0
 		if (!cbfs_lz4_enabled())
 			return 0;
 
@@ -237,7 +240,7 @@ static size_t cbfs_load_and_decompress(const struct region_device *rdev, void *b
 		rdev_munmap(rdev, map);
 
 		return out_size;
-
+#endif
 	case CBFS_COMPRESS_LZMA:
 		if (!cbfs_lzma_enabled())
 			return 0;

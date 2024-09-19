@@ -44,12 +44,13 @@ postcar-y += bsd/cbfs_mcache.c
 ramstage-y += bsd/cbfs_mcache.c
 smm-y += bsd/cbfs_mcache.c
 
-decompressor-y += bsd/lz4_wrapper.c
-bootblock-y += bsd/lz4_wrapper.c
-verstage-y += bsd/lz4_wrapper.c
-romstage-y += bsd/lz4_wrapper.c
-ramstage-y += bsd/lz4_wrapper.c
-postcar-y += bsd/lz4_wrapper.c
+# unused anyway, but faster build ;-)
+# decompressor-y += bsd/lz4_wrapper.c
+# bootblock-y += bsd/lz4_wrapper.c
+# verstage-y += bsd/lz4_wrapper.c
+# romstage-y += bsd/lz4_wrapper.c
+# ramstage-y += bsd/lz4_wrapper.c
+# postcar-y += bsd/lz4_wrapper.c
 
 ramstage-y += sort.c
 

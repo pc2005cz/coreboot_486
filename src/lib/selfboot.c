@@ -112,6 +112,8 @@ printk(BIOS_DEBUG, "tmp 0:%02hhx 1:%02hhx 2:%02hhx 3:%02hhx\n",
 		break;
 	}
 	case CBFS_COMPRESS_LZ4: {
+		return 0;
+#if 0
 		printk(BIOS_DEBUG, "using LZ4\n");
 		timestamp_add_now(TS_ULZ4F_START);
 		len = ulz4fn(src, len, dest, memsz);
@@ -119,6 +121,7 @@ printk(BIOS_DEBUG, "tmp 0:%02hhx 1:%02hhx 2:%02hhx 3:%02hhx\n",
 		if (!len) /* Decompression Error. */
 			return 0;
 		break;
+#endif
 	}
 	case CBFS_COMPRESS_NONE: {
 		printk(BIOS_DEBUG, "it's not compressed!\n");
