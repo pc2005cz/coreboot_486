@@ -70,7 +70,40 @@ static int load_one_segment(uint8_t *dest,
 	/* Copy data from the initial buffer */
 	switch (compression) {
 	case CBFS_COMPRESS_LZMA: {
-		printk(BIOS_DEBUG, "using LZMA\n");
+		printk(BIOS_DEBUG, "using LZMA s:%p d:%p\n", src, dest);
+
+#if 0
+{
+	dest[0] = 0x42;
+	dest[1] = 0xaa;
+	dest[2] = 0xbb;
+	dest[3] = 0x23;
+printk(BIOS_DEBUG, "dump 0:%02hhx 1:%02hhx 2:%02hhx 3:%02hhx\n",
+       dest[0], dest[1], dest[2], dest[3]
+);
+
+uint8_t *tmp = (uint8_t *) 0xf0000;
+	tmp[0] = 0x33;
+	tmp[1] = 0x22;
+	tmp[2] = 0x11;
+	tmp[3] = 0x69;
+
+printk(BIOS_DEBUG, "tmp 0:%02hhx 1:%02hhx 2:%02hhx 3:%02hhx\n",
+       tmp[0], tmp[1], tmp[2], tmp[3]
+);
+
+	tmp[0] = 0x33;
+	tmp[1] = 0x22;
+	tmp[2] = 0x11;
+	tmp[3] = 0x69;
+printk(BIOS_DEBUG, "tmp 0:%02hhx 1:%02hhx 2:%02hhx 3:%02hhx\n",
+       tmp[0], tmp[1], tmp[2], tmp[3]
+);
+
+}
+#endif
+
+
 		timestamp_add_now(TS_ULZMA_START);
 		len = ulzman(src, len, dest, memsz);
 		timestamp_add_now(TS_ULZMA_END);

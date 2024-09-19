@@ -27,6 +27,9 @@
 
 #include "lzmadecode.h"
 #include <types.h>
+#include <console/console.h>
+
+#include <string.h>
 
 #define kNumTopBits 24
 #define kTopValue ((UInt32)1 << kNumTopBits)
@@ -35,16 +38,38 @@
 #define kBitModelTotal (1 << kNumBitModelTotalBits)
 #define kNumMoveBits 5
 
+
 /* Use 32-bit reads whenever possible to avoid bad flash performance. Fall back
  * to byte reads for last 4 bytes since RC_TEST returns an error when BufferLim
  * is *reached* (not surpassed!), meaning we can't allow that to happen while
  * there are still bytes to decode from the algorithm's point of view. */
+
+static Byte _read8(const Byte * buf)
+{
+	Byte tmp8;
+
+	memcpy(&tmp8, buf, 1);
+
+	return tmp8;
+}
+
+static UInt32 _read32(const Byte * buf)
+{
+	UInt32 tmp32;
+
+	memcpy(&tmp32, buf, 4);
+
+	return tmp32;
+}
+
+
 #define RC_READ_BYTE							\
 	(look_ahead_ptr < 4 ? look_ahead.raw[look_ahead_ptr++]		\
 	: ((((uintptr_t) Buffer & 3)					\
-		|| ((SizeT) (BufferLim - Buffer) <= 4)) ? (*Buffer++)	\
-	: ((look_ahead.dw = *(UInt32 *)Buffer), (Buffer += 4),		\
+		|| ((SizeT) (BufferLim - Buffer) <= 4)) ? (_read8(Buffer++))	\
+	: ((look_ahead.dw = _read32(Buffer)), (Buffer += 4),		\
 		(look_ahead_ptr = 1), look_ahead.raw[0])))
+
 
 #define RC_INIT2 Code = 0; Range = 0xFFFFFFFF;		\
 {							\
@@ -292,8 +317,11 @@ int LzmaDecode(CLzmaDecoderState *vs,
 					IfBit0(prob) {
 						UpdateBit0(prob);
 
-						if (nowPos == 0)
+						if (nowPos == 0) {
+							//printk(BIOS_INFO, "nowpos 0\n");
+
 							return LZMA_RESULT_DATA_ERROR;
+						}
 
 						state = state < kNumLitStates
 							? 9 : 11;
@@ -417,8 +445,11 @@ int LzmaDecode(CLzmaDecoderState *vs,
 			}
 
 			len += kMatchMinLen;
-			if (rep0 > nowPos)
+			if (rep0 > nowPos) {
+				//printk(BIOS_INFO, "rep0 %u, nowpos %u\n", rep0, nowPos);
+
 				return LZMA_RESULT_DATA_ERROR;
+			}
 
 
 			do {
@@ -437,5 +468,8 @@ int LzmaDecode(CLzmaDecoderState *vs,
 
 	*inSizeProcessed = (SizeT)(Buffer - inStream);
 	*outSizeProcessed = nowPos;
+
+	// printk(BIOS_INFO, "LZMA OK\n");
+
 	return LZMA_RESULT_OK;
 }

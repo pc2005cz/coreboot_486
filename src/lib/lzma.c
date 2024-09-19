@@ -28,19 +28,28 @@ size_t ulzman(const void *src, size_t srcn, void *dst, size_t dstn)
 	CLzmaDecoderState state;
 	SizeT mallocneeds;
 	static unsigned char scratchpad[15980];
-	const unsigned char *cp;
+	unsigned char cp[4];
 
 	if (srcn < data_offset) {
 		printk(BIOS_WARNING, "lzma: Input too small.\n");
 		return 0;
 	}
 
+	/*
+	https://elixir.bootlin.com/coreboot/4.19/source/src/lib/lzma.c#L38
+	https://elixir.bootlin.com/coreboot/4.19/source/src/lib/lzmadecode.c#L42
+	https://elixir.bootlin.com/coreboot/4.19/source/util/cbfstool/cbfs_image.c#L1485
+	*/
+
+
 	memcpy(properties, src, LZMA_PROPERTIES_SIZE);
 	/* The outSize in LZMA stream is a 64bit integer stored in little-endian
 	 * (ref: lzma.cc@LZMACompress: put_64). To prevent accessing by
 	 * unaligned memory address and to load in correct endianness, read each
 	 * byte and re-construct. */
-	cp = src + LZMA_PROPERTIES_SIZE;
+
+	memcpy(cp, src + LZMA_PROPERTIES_SIZE, 4);
+	// cp = src + LZMA_PROPERTIES_SIZE;
 	outSize = cp[3] << 24 | cp[2] << 16 | cp[1] << 8 | cp[0];
 	if (outSize > dstn)
 		outSize = dstn;
