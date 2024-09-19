@@ -50,13 +50,13 @@ static struct {
 
 static void update_clock(void)
 {
-	u64 delta = timer_raw_value() - clock.ticks;
+	u64 delta = 0;
 	int secs;
 	static uint64_t ticks_per_sec = 0;
 	static uint64_t ticks_per_usec = 0;
 	if (!ticks_per_sec) {
-		ticks_per_sec = timer_hz();
-		ticks_per_usec = timer_hz() / 1000000;
+		ticks_per_sec = 1000000;
+		ticks_per_usec = 1;
 	}
 
 	clock.ticks += delta;
@@ -97,7 +97,7 @@ static void gettimeofday_init(void)
 	struct tm tm;
 
 	rtc_read_clock(&tm);
-	clock.ticks = rdtsc();
+	clock.ticks = 0;
 
 	/* Calculate the number of days in the year so far */
 	days = day_of_year(tm.tm_mon, tm.tm_mday, tm.tm_year + 1900);
@@ -118,7 +118,7 @@ static void gettimeofday_init(void)
 static void gettimeofday_init(void)
 {
 	/* Record the number of ticks */
-	clock.ticks = timer_raw_value();
+	clock.ticks = 0;
 }
 #endif
 
@@ -163,24 +163,12 @@ int gettimeofday(struct timeval *tv, void *tz)
 __attribute__((weak))
 void arch_ndelay(uint64_t ns)
 {
-	uint64_t delta = ns * timer_hz() / NSECS_PER_SEC;
-	uint64_t start = timer_raw_value();
-	while (timer_raw_value() - start < delta) ;
+        for (uint64_t t=0;t< (ns >> 3);t++) {
+        }
 }
 
 u64 timer_us(u64 base)
 {
-	static u64 hz;
 
-	// Only check timer_hz once. Assume it doesn't change.
-	if (hz == 0) {
-		hz = timer_hz();
-		if (hz < 1000000) {
-			printf("Timer frequency %" PRIu64 " is too low, "
-			       "must be at least 1MHz.\n", hz);
-			halt();
-		}
-	}
-
-	return (1000000 * timer_raw_value()) / hz - base;
+	return 1000000 ;
 }

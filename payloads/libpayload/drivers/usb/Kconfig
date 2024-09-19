@@ -8,7 +8,7 @@ config USB
 
 config USB_UHCI
 	bool "Support for USB UHCI controllers"
-	depends on USB && ARCH_X86
+	depends on USB && (ARCH_X86 || ARCH_486)
 	default y if !CHROMEOS
 	help
 	  Select this option if you are going to use USB 1.1 on an Intel based
@@ -92,7 +92,7 @@ config USB_GEN_HUB
 config USB_PCI
 	bool "Auto-scan PCI bus for USB host controllers"
 	depends on USB
-	default y if ARCH_X86
+	default y if ARCH_X86 || ARCH_486
 	default n
 
 config UDC

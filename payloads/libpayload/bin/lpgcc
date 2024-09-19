@@ -91,6 +91,12 @@ if [ "$CONFIG_LP_ARCH_X86" = "y" ]; then
   _ARCHEXTRA="-m32 "
   _ARCH=x86
 fi
+if [ "$CONFIG_LP_ARCH_486" = "y" ]; then
+  _ARCHINCDIR=$_INCDIR/486
+  _ARCHLIBDIR=$_LIBDIR/486
+  _ARCHEXTRA="-m32 "
+  _ARCH=x86
+fi
 if [ "$CONFIG_LP_ARCH_MOCK" = "y" ]; then
   _ARCHINCDIR=$_INCDIR/mock
   _ARCHLIBDIR=$_LIBDIR/mock

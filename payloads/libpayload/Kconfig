@@ -104,7 +104,7 @@ menu "Architecture Options"
 
 choice
         prompt "Target Architecture"
-        default ARCH_X86
+        default ARCH_486
 
 config ARCH_ARM
         bool "ARM"
@@ -113,6 +113,11 @@ config ARCH_ARM
 
 config ARCH_X86
         bool "x86"
+        help
+          Support the x86 architecture
+
+config ARCH_486
+        bool "486"
         help
           Support the x86 architecture
 
@@ -133,7 +138,7 @@ endchoice
 
 config MULTIBOOT
 	bool "Multiboot header support"
-	depends on ARCH_X86
+	depends on ARCH_X86 || ARCH_486
 	default y if !CHROMEOS
 
 config HEAP_SIZE
@@ -157,7 +162,7 @@ config BASE_ADDRESS
 	hex "Base address"
 	default 0x04000000 if ARCH_ARM
 	default 0x80100000 if ARCH_ARM64
-	default 0x00100000 if ARCH_X86
+	default 0x00100000 if ARCH_X86 || ARCH_486
 	default 0x00000000 if ARCH_MOCK
 	help
 	  This is the base address for the payload.
@@ -250,7 +255,7 @@ config SERIAL_CONSOLE
 config 8250_SERIAL_CONSOLE
 	bool "8250-compatible serial port driver (including IO and MMIO)"
 	depends on SERIAL_CONSOLE
-	default y if ARCH_X86
+	default y if ARCH_X86 || ARCH_486
 
 config S5P_SERIAL_CONSOLE
 	bool "Exynos SOC, S5P compatible serial port driver"
@@ -285,7 +290,7 @@ config PL011_SERIAL_CONSOLE
 config SERIAL_IOBASE
 	## This default is currently not used on non-x86 systems.
 	hex "Default I/O base for the serial port (default 0x3f8)"
-	depends on SERIAL_CONSOLE && ARCH_X86
+	depends on SERIAL_CONSOLE && (ARCH_X86 || ARCH_486)
 	default 0x3f8
 
 config SERIAL_SET_SPEED
@@ -318,7 +323,7 @@ config VIDEO_CONSOLE
 
 config VGA_VIDEO_CONSOLE
 	bool "VGA video console driver"
-	depends on ARCH_X86 && VIDEO_CONSOLE
+	depends on (ARCH_X86 || ARCH_486) && VIDEO_CONSOLE
 	default y if !CHROMEOS
 
 config GEODELX_VIDEO_CONSOLE
@@ -373,14 +378,14 @@ config PC_I8042
 config PC_MOUSE
 	bool "Allow input from a PC mouse"
 	default n if CHROMEOS
-	default y if ARCH_X86 # uses IO
+	default y if (ARCH_X86 || ARCH_486) # uses IO
 	default n
 	help
 	  PS/2 mouse driver on top of PC_I8042.
 
 config PC_KEYBOARD
 	bool "Allow input from a PC keyboard"
-	default y if ARCH_X86 # uses IO
+	default y if (ARCH_X86 || ARCH_486) # uses IO
 	default n
 
 config PC_KEYBOARD_LAYOUT_US
@@ -404,13 +409,13 @@ menu "Drivers"
 
 config PCI
 	bool "Support for PCI devices"
-	default y if ARCH_X86
+	default y if ARCH_X86 || ARCH_486
 	default n
 
 config PCI_IO_OPS
 	bool "Support for PCI devices with port IO"
 	depends on PCI && IO_ADDRESS_SPACE
-	default y if ARCH_X86
+	default y if ARCH_X86 || ARCH_486
 	default n
 
 config PCIE_MEDIATEK
@@ -425,7 +430,7 @@ config PCIE_QCOM
 
 config NVRAM
 	bool "Support for reading/writing NVRAM bytes"
-	depends on ARCH_X86 # for now
+	depends on ARCH_X86 || ARCH_486 # for now
 	default y
 
 config MOUSE_CURSOR
@@ -457,7 +462,7 @@ config RTC_PORT_EXTENDED_VIA
 
 config SPEAKER
 	bool "Support for PC speaker"
-	depends on ARCH_X86
+	depends on ARCH_X86 || ARCH_486
 	default y if !CHROMEOS
 
 source "drivers/timer/Kconfig"
@@ -503,5 +508,5 @@ config IO_ADDRESS_SPACE
 
 source "arch/arm/Kconfig"
 source "arch/arm64/Kconfig"
-source "arch/x86/Kconfig"
+source "arch/486/Kconfig"
 source "arch/mock/Kconfig"

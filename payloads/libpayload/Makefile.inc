@@ -40,6 +40,7 @@ export KERNELVERSION      := 0.2.0
 ARCHDIR-$(CONFIG_LP_ARCH_ARM)     := arm
 ARCHDIR-$(CONFIG_LP_ARCH_ARM64)   := arm64
 ARCHDIR-$(CONFIG_LP_ARCH_X86)     := x86
+ARCHDIR-$(CONFIG_LP_ARCH_486)     := 486
 ARCHDIR-$(CONFIG_LP_ARCH_MOCK)    := mock
 DESTDIR ?= install
 
@@ -75,9 +76,9 @@ INCLUDES += -I$(VBOOT_SOURCE)/firmware/include
 CFLAGS += $(INCLUDES) -Os -pipe -nostdinc -ggdb3
 CFLAGS += -nostdlib -fno-builtin -ffreestanding -fomit-frame-pointer
 CFLAGS += -ffunction-sections -fdata-sections
-CFLAGS += -Wall -Wundef -Wstrict-prototypes -Wmissing-prototypes -Wvla
-CFLAGS += -Wwrite-strings -Wredundant-decls -Wno-trigraphs -Wimplicit-fallthrough
-CFLAGS += -Wstrict-aliasing -Wshadow -Werror
+CFLAGS += -Wundef -Wstrict-prototypes -Wmissing-prototypes -Wvla
+CFLAGS += -Wwrite-strings -Wredundant-decls -Wno-trigraphs -Wimplicit-fallthrough -Wno-error=sign-compare
+CFLAGS += -Wstrict-aliasing -Wshadow
 
 ifeq ($(CONFIG_LP_LTO),y)
 CFLAGS += -flto

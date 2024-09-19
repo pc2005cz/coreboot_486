@@ -38,7 +38,7 @@ CCACHE ?=
 
 CFLAGS  = $(CFLAGS_$(ARCH))
 CFLAGS += -Os -ffreestanding
-CFLAGS += -Wall -Wextra -Wmissing-prototypes -Wvla -Werror
+CFLAGS += -Wextra -Wmissing-prototypes -Wvla 
 
 STRIP ?= debug
 

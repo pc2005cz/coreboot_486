@@ -110,6 +110,7 @@ include $(HAVE_DOTCONFIG)
 ARCHDIR-$(CONFIG_LP_ARCH_ARM)     := arm
 ARCHDIR-$(CONFIG_LP_ARCH_ARM64)   := arm64
 ARCHDIR-$(CONFIG_LP_ARCH_X86)     := x86
+ARCHDIR-$(CONFIG_LP_ARCH_486)     := 486
 ARCHDIR-$(CONFIG_LP_ARCH_MOCK)    := mock
 
 ARCH-y := $(ARCHDIR-y)
@@ -119,6 +120,7 @@ ARCH-y := $(ARCHDIR-y)
 ARCH-$(CONFIG_LP_ARCH_ARM)     := arm
 ARCH-$(CONFIG_LP_ARCH_ARM64)   := arm64
 ARCH-$(CONFIG_LP_ARCH_X86)     := x86_32
+ARCH-$(CONFIG_LP_ARCH_486)     := x86_32
 ARCH-$(CONFIG_LP_ARCH_MOCK)    := mock
 
 # Five cases where we don't need fully populated $(obj) lists:

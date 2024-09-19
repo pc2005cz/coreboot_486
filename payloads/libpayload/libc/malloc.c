@@ -124,7 +124,7 @@ int dma_coherent(const void *ptr)
 }
 
 /* Find free block of size >= len */
-static hdrtype_t volatile *find_free_block(int len, struct memory_type *type)
+static hdrtype_t volatile *find_free_block(size_t len, struct memory_type *type)
 {
 	hdrtype_t header;
 	hdrtype_t volatile *ptr = (hdrtype_t volatile *)type->start;
@@ -132,7 +132,7 @@ static hdrtype_t volatile *find_free_block(int len, struct memory_type *type)
 	/* Align the size. */
 	len = ALIGN_UP(len, HDRSIZE);
 
-	if (!len || len > MAX_SIZE)
+	if (!len)
 		return (void *)NULL;
 
 	/* Make sure the region is setup correctly. */
@@ -148,7 +148,7 @@ static hdrtype_t volatile *find_free_block(int len, struct memory_type *type)
 	/* Find some free space. */
 	do {
 		header = *ptr;
-		int size = SIZE(header);
+		size_t size = SIZE(header);
 
 		if (!HAS_MAGIC(header) || size == 0) {
 			printf("memory allocator panic. (%s%s)\n",
@@ -195,7 +195,7 @@ static void use_block(hdrtype_t volatile *ptr, int len)
 	}
 }
 
-static void *alloc(int len, struct memory_type *type)
+static void *alloc(size_t len, struct memory_type *type)
 {
 	hdrtype_t volatile *ptr = find_free_block(len, type);
 
@@ -347,7 +347,7 @@ struct align_region_t
 {
 	/* If alignment is 0 then the region represents a large region which
 	 * has no metadata for tracking subelements. */
-	int alignment;
+	unsigned alignment;
 	/* start in memory, and size in bytes */
 	void* start;
 	int size;
