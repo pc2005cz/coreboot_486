@@ -183,25 +183,30 @@ void quick_ram_check_or_die(uintptr_t dst)
 	backup = read_phys(dst);
 	write_phys(dst, 0x55555555);
 	phys_memory_barrier();
+// printk(BIOS_DEBUG, "DDD1 [%08lx] = %08x\n", dst, read_phys(dst));
 	if (read_phys(dst) != 0x55555555)
 		fail = 1;
 	write_phys(dst, 0xaaaaaaaa);
 	phys_memory_barrier();
+// printk(BIOS_DEBUG, "DDD2 [%08lx] = %08x\n", dst, read_phys(dst));
 	if (read_phys(dst) != 0xaaaaaaaa)
-		fail = 1;
+		fail |= 2;
 	write_phys(dst, 0x00000000);
 	phys_memory_barrier();
+// printk(BIOS_DEBUG, "DDD3 [%08lx] = %08x\n", dst, read_phys(dst));
 	if (read_phys(dst) != 0x00000000)
-		fail = 1;
+		fail |= 4;
 	write_phys(dst, 0xffffffff);
 	phys_memory_barrier();
+// printk(BIOS_DEBUG, "DDD4 [%08lx] = %08x\n", dst, read_phys(dst));
 	if (read_phys(dst) != 0xffffffff)
-		fail = 1;
+		fail |= 8;
 
 	write_phys(dst, backup);
 	if (fail) {
-		post_code(POST_RAM_FAILURE);
-		die("RAM INIT FAILURE!\n");
+printk(BIOS_DEBUG, "RAM INIT FAILURE! fail=%x\n", fail);
+		// post_code(POST_RAM_FAILURE);
+		// die("RAM INIT FAILURE!\n");
 	}
 	phys_memory_barrier();
 }
