@@ -2,9 +2,9 @@
 
 #include <arch/io.h>
 #include <commonlib/helpers.h>
-#include <cpu/x86/tsc.h>
 #include <delay.h>
 #include <pc80/i8254.h>
+
 
 /* Initialize i8254 timers */
 
@@ -16,12 +16,15 @@ void setup_i8254(void)
 	outb(0x00, TIMER0_PORT);
 
 	/* Timer 1 */
-	outb(TIMER1_SEL | LOBYTE_ACCESS | MODE3 | BINARY_COUNT,
+	outb(TIMER1_SEL | WORD_ACCESS | MODE2 | BINARY_COUNT,
 	     TIMER_MODE_PORT);
 	outb(0x12, TIMER1_PORT);
+	outb(0x0, TIMER1_PORT);
 }
 
 #define CLOCK_TICK_RATE	1193180U /* Underlying HZ */
+
+#if CONFIG(UNKNOWN_TSC_RATE)
 
 /* ------ Calibrate the TSC -------
  * Too much 64-bit arithmetic here to do this cleanly in C, and for
@@ -94,7 +97,6 @@ bad_ctc:
 	return 0;
 }
 
-#if CONFIG(UNKNOWN_TSC_RATE)
 static u32 timer_tsc;
 
 unsigned long tsc_freq_mhz(void)
