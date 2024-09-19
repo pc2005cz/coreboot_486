@@ -1387,18 +1387,18 @@ static int cbfs_create(void)
 	memset(&image, 0, sizeof(image));
 	buffer_clone(&image.buffer, param.image_region);
 
-	if (param.fmap) {
-		if (param.arch != CBFS_ARCHITECTURE_UNKNOWN || param.size ||
-						param.baseaddress_assigned ||
-						param.headeroffset_assigned ||
-						param.cbfsoffset_assigned ||
-							param.bootblock) {
-			ERROR("Since -M was provided, -m, -s, -b, -o, -H, and -B should be omitted\n");
-			return 1;
-		}
+	// if (param.fmap) {
+		// if (param.arch != CBFS_ARCHITECTURE_UNKNOWN || param.size ||
+		// 				param.baseaddress_assigned ||
+		// 				param.headeroffset_assigned ||
+		// 				param.cbfsoffset_assigned ||
+		// 					param.bootblock) {
+		// 	ERROR("Since -M was provided, -m, -s, -b, -o, -H, and -B should be omitted\n");
+		// 	return 1;
+		// }
 
 		return cbfs_image_create(&image, image.buffer.size);
-	}
+	// }
 
 	if (param.arch == CBFS_ARCHITECTURE_UNKNOWN) {
 		ERROR("You need to specify -m/--machine arch.\n");

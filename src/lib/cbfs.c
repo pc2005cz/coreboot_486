@@ -7,7 +7,7 @@
 #include <commonlib/bsd/cbfs_private.h>
 #include <commonlib/bsd/compression.h>
 #include <console/console.h>
-#include <fmap.h>
+// #include <fmap.h>
 #include <lib.h>
 #include <list.h>
 #include <metadata_hash.h>
@@ -670,11 +670,20 @@ const struct cbfs_boot_device *cbfs_get_boot_device(bool force_ro)
 	   time until an mcache is found. */
 	cbfs_boot_device_find_mcache(&ro, CBMEM_ID_CBFS_RO_MCACHE);
 
-	if (region_device_sz(&ro.rdev))
+	if (region_device_sz(&ro.rdev)) {
+		// printk(BIOS_DEBUG, "L2 RO\n");
 		return &ro;
+	}
 
-	if (fmap_locate_area_as_rdev("COREBOOT", &ro.rdev))
-		die("Cannot locate primary CBFS");
+///////////////////////// fmap removal
+
+	struct region ar;
+	ar.offset = 0;
+	ar.size = CONFIG_CBFS_SIZE;
+
+	if (boot_device_ro_subregion(&ar, &ro.rdev)) {
+		die("Cannot locate CBFS");
+	}
 
 	if (ENV_INITIAL_STAGE) {
 		enum cb_err err = cbfs_init_boot_device(&ro, metadata_hash_get());

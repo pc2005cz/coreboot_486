@@ -232,7 +232,7 @@ static void lb_boot_media_params(struct lb_header *header)
 	bmp->cbfs_size = region_device_sz(&cbd->rdev);
 	bmp->boot_media_size = region_device_sz(boot_dev);
 
-	bmp->fmap_offset = get_fmap_flash_offset();
+//	bmp->fmap_offset = get_fmap_flash_offset();
 }
 
 static void lb_mmc_info(struct lb_header *header)

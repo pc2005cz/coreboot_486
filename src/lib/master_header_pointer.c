@@ -2,17 +2,17 @@
 
 #include <commonlib/bsd/cbfs_serialized.h>
 #include <endian.h>
-#include <fmap_config.h>
+//#include <fmap_config.h>
 #include <stdint.h>
 
 #if CONFIG(BOOTBLOCK_IN_CBFS)
 __attribute__((used, __section__(".header_pointer")))
 #endif
 
-#if FMAP_SECTION_COREBOOT_START < (0xffffffff - CONFIG_ROM_SIZE + 1)
-#define COREBOOT_CBFS_START (0xffffffff - CONFIG_ROM_SIZE + 1 + FMAP_SECTION_COREBOOT_START)
+#if 0 < (0xffffffff - CONFIG_ROM_SIZE + 1)
+#define COREBOOT_CBFS_START (0xffffffff - CONFIG_ROM_SIZE + 1 + 0)
 #else
-#define COREBOOT_CBFS_START FMAP_SECTION_COREBOOT_START
+#define COREBOOT_CBFS_START 0
 #endif
 
 uint32_t header_pointer =

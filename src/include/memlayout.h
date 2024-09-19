@@ -8,7 +8,7 @@
 #include <arch/memlayout.h>
 #include <vb2_constants.h>
 
-#include "fmap_config.h"
+//#include "fmap_config.h"
 
 /* Macros that the architecture can override. */
 #ifndef ARCH_POINTER_ALIGN_SIZE

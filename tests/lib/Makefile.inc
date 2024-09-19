@@ -77,12 +77,12 @@ cbmem_console-ramstage-test-srcs += tests/stubs/console.c
 list-test-srcs += tests/lib/list-test.c
 list-test-srcs += src/lib/list.c
 
-fmap-test-srcs += tests/lib/fmap-test.c
-fmap-test-srcs += src/lib/fmap.c
-fmap-test-srcs += tests/stubs/console.c
-fmap-test-srcs += src/lib/boot_device.c
-fmap-test-srcs += src/commonlib/region.c
-fmap-test-cflags += -I tests/include/tests/lib/fmap
+#fmap-test-srcs += tests/lib/fmap-test.c
+#fmap-test-srcs += src/lib/fmap.c
+#fmap-test-srcs += tests/stubs/console.c
+#fmap-test-srcs += src/lib/boot_device.c
+#fmap-test-srcs += src/commonlib/region.c
+#fmap-test-cflags += -I tests/include/tests/lib/fmap
 
 imd_cbmem-ramstage-test-stage := ramstage
 imd_cbmem-ramstage-test-srcs += tests/lib/imd_cbmem-test.c

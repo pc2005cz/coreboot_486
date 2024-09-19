@@ -64,14 +64,14 @@ bootblock-y += delay.c
 bootblock-y += memchr.c
 bootblock-y += memcmp.c
 bootblock-y += boot_device.c
-bootblock-y += fmap.c
+#bootblock-y += fmap.c
 
 verstage-y += prog_loaders.c
 verstage-y += prog_ops.c
 verstage-y += delay.c
 verstage-y += cbfs.c
 verstage-y += halt.c
-verstage-y += fmap.c
+#verstage-y += fmap.c
 verstage-y += libgcc.c
 verstage-y += memcmp.c
 verstage-y += string.c
@@ -92,7 +92,7 @@ $(foreach arch,$(ARCH_SUPPORTED),\
 	    $(eval rmodules_$(arch)-y += memcmp.c) \
 	    $(eval rmodules_$(arch)-y += rmodule.ld))
 
-romstage-y += fmap.c
+#romstage-y += fmap.c
 romstage-y += delay.c
 romstage-y += cbfs.c
 ifneq ($(CONFIG_COMPRESS_RAMSTAGE_LZMA)$(CONFIG_FSP_COMPRESS_FSP_M_LZMA),)
@@ -117,7 +117,7 @@ romstage-$(CONFIG_COLLECT_TIMESTAMPS) += timestamp.c
 romstage-$(CONFIG_CONSOLE_CBMEM) += cbmem_console.c
 
 romstage-y += compute_ip_checksum.c
-romstage-y += dimm_info_util.c
+#romstage-y += dimm_info_util.c
 ifeq ($(CONFIG_COMPILER_GCC),y)
 bootblock-$(CONFIG_ARCH_BOOTBLOCK_X86_32) += gcc.c
 verstage-$(CONFIG_ARCH_VERSTAGE_X86_32) += gcc.c
@@ -135,7 +135,7 @@ ramstage-y += hardwaremain.c
 ramstage-y += selfboot.c
 ramstage-y += coreboot_table.c
 ramstage-y += bootmem.c
-ramstage-y += fmap.c
+#ramstage-y += fmap.c
 ramstage-y += memchr.c
 ramstage-y += memcmp.c
 ramstage-y += malloc.c
@@ -222,7 +222,7 @@ ramstage-y += boot_device.c
 
 smm-y += boot_device.c
 smm-y += delay.c
-smm-y += fmap.c
+#smm-y += fmap.c
 smm-y += cbfs.c memcmp.c
 smm-$(CONFIG_GENERIC_UDELAY) += timer.c
 ifeq ($(CONFIG_DEBUG_SMI),y)
@@ -243,12 +243,12 @@ $(call src-to-obj,smm,$(dir)/version.c) : $(obj)/build.h
 $(call src-to-obj,verstage,$(dir)/version.c) : $(obj)/build.h
 $(call src-to-obj,postcar,$(dir)/version.c) : $(obj)/build.h
 
-$(call src-to-obj,bootblock,$(dir)/fmap.c) : $(obj)/fmap_config.h
-$(call src-to-obj,romstage,$(dir)/fmap.c) : $(obj)/fmap_config.h
-$(call src-to-obj,ramstage,$(dir)/fmap.c) : $(obj)/fmap_config.h
-$(call src-to-obj,smm,$(dir)/fmap.c) : $(obj)/fmap_config.h
-$(call src-to-obj,verstage,$(dir)/fmap.c) : $(obj)/fmap_config.h
-$(call src-to-obj,postcar,$(dir)/fmap.c) : $(obj)/fmap_config.h
+#$(call src-to-obj,bootblock,$(dir)/fmap.c) : $(obj)/fmap_config.h
+#$(call src-to-obj,romstage,$(dir)/fmap.c) : $(obj)/fmap_config.h
+#$(call src-to-obj,ramstage,$(dir)/fmap.c) : $(obj)/fmap_config.h
+#$(call src-to-obj,smm,$(dir)/fmap.c) : $(obj)/fmap_config.h
+#$(call src-to-obj,verstage,$(dir)/fmap.c) : $(obj)/fmap_config.h
+#$(call src-to-obj,postcar,$(dir)/fmap.c) : $(obj)/fmap_config.h
 
 bootblock-y += bootmode.c
 romstage-y += bootmode.c
@@ -292,7 +292,7 @@ postcar-y += bootmode.c
 postcar-y += boot_device.c
 postcar-y += cbfs.c
 postcar-y += delay.c
-postcar-y += fmap.c
+#postcar-y += fmap.c
 postcar-y += gcc.c
 postcar-y += halt.c
 postcar-y += libgcc.c
@@ -414,16 +414,25 @@ cbfs_master_header-file := cbfs_master_header.c:struct
 cbfs_master_header-type := "cbfs header"
 cbfs_master_header-position := 0
 
-ifeq ($(CONFIG_ARCH_X86),y)
-$(call src-to-obj,bootblock,$(dir)/master_header_pointer.c): $(obj)/fmap_config.h
+ifeq ($(CONFIG_ARCH_486),y)
+ANY86:=y
+else ifeq ($(CONFIG_ARCH_X86),y)
+ANY86:=y
+endif
+
+ifeq ($(ANY86),y)
+$(call src-to-obj,bootblock,$(dir)/master_header_pointer.c):
 bootblock-y += master_header_pointer.c
 endif
 
 NEED_CBFS_POINTER=
 
 ifneq ($(CONFIG_ARCH_X86),y)
+ifneq ($(CONFIG_ARCH_486),y)
 NEED_CBFS_POINTER=y
 endif
+endif
+
 ifneq ($(CONFIG_BOOTBLOCK_IN_CBFS),y)
 NEED_CBFS_POINTER=y
 endif

@@ -64,7 +64,9 @@ struct cbfs_header {
 } __packed;
 
 /* this used to be flexible, but wasn't ever set to something different. */
-#define CBFS_ALIGNMENT 64
+#define CBFS_ALIGNMENT 32	//pc2005, original 64
+//CBFS must be aligned to at least 28 bytes
+
 
 /* "Unknown" refers to CBFS headers version 1,
  * before the architecture was defined (i.e., x86 only).
