@@ -1,0 +1,4 @@
+config BOARD_BIOSTAR_MB8433
+	bool "Biostar MB8433"
+	help
+	  experimental

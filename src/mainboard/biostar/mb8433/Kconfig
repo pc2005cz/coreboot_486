@@ -1,0 +1,32 @@
+if BOARD_BIOSTAR_MB8433
+
+config BOARD_SPECIFIC_OPTIONS
+	def_bool y
+	select CPU_486
+	select BOARD_ROMSIZE_KB_128
+	select MISSING_BOARD_RESET
+	select NORTHBRIDGE_UMC_UM8881
+	select SOUTHBRIDGE_UMC_UM8886
+	select SUPERIO_UMC_UM8663BF
+	select HAVE_OPTION_TABLE
+#	select HAVE_CMOS_DEFAULT
+	select HAVE_PIRQ_TABLE
+	select NO_MONOTONIC_TIMER
+
+
+#TODO TODO TODO TODO TODO TODO TODO
+#https://elixir.bootlin.com/coreboot/4.7/A/ident/pirq_assign_irqs
+#required (sets PCI IRQ) if you want to boot from usb, also required if kernel doesn't  reroute
+	select PIRQ_ROUTE
+
+config MAINBOARD_DIR
+	default "biostar/mb8433"
+
+config MAINBOARD_PART_NUMBER
+	default "MB8433"
+
+config IRQ_SLOT_COUNT
+	int
+	default 3
+
+endif # BOARD_BIOSTAR_MB8433

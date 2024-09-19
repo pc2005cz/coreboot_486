@@ -1,0 +1,21 @@
+chip northbridge/umc/um8881
+
+	device cpu_cluster 0 on ops um8881_cpu_bus_ops end
+
+	device domain 0 on
+		ops um8881_pci_domain_ops
+
+		device pci 10.0 on end # host bridge
+
+		device pci 03.0 on end # PCI1 near ISA
+		device pci 04.0 on end # PCI2 middle
+		device pci 05.0 on end # PCI3 near RAM
+
+		chip southbridge/umc/um8886
+			device pci 12.0 on end # ISA bridge
+			device pci 12.1 on end # IDE
+
+			#chip superio/umc/um8663af
+		end
+	end
+end

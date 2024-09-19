@@ -1,0 +1,8 @@
+Board name: Biostar MB8433
+Category: retro
+Board URL: https://theretroweb.com/motherboards/s/biostar-mb-8425uud-a
+ROM package: DIP-32
+ROM protocol: Parallel
+ROM socketed: y
+Flashrom support: y
+Release year: 1995
